@@ -1,0 +1,584 @@
+ased ? `
+                            <button class="btn btn-primary btn-block btn-lg" onclick="downloadTemplate('${template.id}')">
+                                ⬇️ Télécharger
+                            </button>
+                        ` : `
+                            <button class="btn btn-primary btn-block btn-lg" onclick="purchaseTemplate('${template.id}')">
+                                💳 Acheter maintenant
+                            </button>
+                        `}
+                        <button class="btn btn-ghost btn-block" onclick="navigate('templates')">← Retour aux modèles</button>
+                    </div>
+                    <div class="sidebar-features">
+                        <div class="sidebar-features-title">Ce qui est inclus :</div>
+                        <div class="sidebar-feature"><span class="sidebar-feature-icon">✓</span> Fichier Excel complet</div>
+                        <div class="sidebar-feature"><span class="sidebar-feature-icon">✓</span> 100% éditable</div>
+                        <div class="sidebar-feature"><span class="sidebar-feature-icon">✓</span> Formules pré-configurées</div>
+                        <div class="sidebar-feature"><span class="sidebar-feature-icon">✓</span> Compatible Excel & Google Sheets</div>
+                        <div class="sidebar-feature"><span class="sidebar-feature-icon">✓</span> Support par email</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderFilters() {
+    const filters = document.getElementById('templatesFilters');
+    filters.innerHTML = `
+        <button class="filter-btn active" onclick="filterTemplates('all', this)">Tous</button>
+        ${categories.map(cat => `
+            <button class="filter-btn" onclick="filterTemplates('${cat.id}', this)">${cat.icon} ${cat.name}</button>
+        `).join('')}
+    `;
+}
+
+// =============================================
+// ADMIN PANEL
+// =============================================
+function isAdmin() {
+    return currentProfile?.role === 'admin' || currentProfile?.role === 'super_admin';
+}
+
+async function renderAdminPage() {
+    // Stats
+    document.getElementById('adminStats').innerHTML = `
+        <div class="stat-card">
+            <div class="stat-card-icon green">📄</div>
+            <div class="stat-card-value">${templates.length}</div>
+            <div class="stat-card-label">Modèles</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-icon purple">📁</div>
+            <div class="stat-card-value">${categories.length}</div>
+            <div class="stat-card-label">Catégories</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-icon orange">💰</div>
+            <div class="stat-card-value">0</div>
+            <div class="stat-card-label">Ventes</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-icon cyan">👥</div>
+            <div class="stat-card-value">0</div>
+            <div class="stat-card-label">Utilisateurs</div>
+        </div>
+    `;
+    
+    switchAdminTab('templates');
+}
+
+function switchAdminTab(tab) {
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    const content = document.getElementById('adminContent');
+    
+    switch(tab) {
+        case 'templates':
+            content.innerHTML = `
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Catégorie</th>
+                                <th>Prix</th>
+                                <th>Téléchargements</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${templates.map(t => `
+                                <tr>
+                                    <td><strong>${t.title}</strong></td>
+                                    <td>${t.category_name || '-'}</td>
+                                    <td>${t.is_free ? '<span class="table-badge success">Gratuit</span>' : formatPrice(t.price)}</td>
+                                    <td>${t.downloads_count || 0}</td>
+                                    <td><span class="table-badge ${t.is_active ? 'success' : 'danger'}">${t.is_active ? 'Actif' : 'Inactif'}</span></td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <button class="btn btn-sm btn-ghost" onclick="editTemplate('${t.id}')">✏️</button>
+                                            <button class="btn btn-sm btn-ghost" onclick="confirmDelete('template', '${t.id}')">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            break;
+            
+        case 'categories':
+            content.innerHTML = `
+                <div style="margin-bottom: 1rem;">
+                    <button class="btn btn-primary" onclick="openCategoryModal()">+ Nouvelle Catégorie</button>
+                </div>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Icône</th>
+                                <th>Nom</th>
+                                <th>Slug</th>
+                                <th>Ordre</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${categories.map(c => `
+                                <tr>
+                                    <td style="font-size: 1.5rem;">${c.icon}</td>
+                                    <td><strong>${c.name}</strong></td>
+                                    <td><code>${c.slug}</code></td>
+                                    <td>${c.display_order || 0}</td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <button class="btn btn-sm btn-ghost" onclick="editCategory('${c.id}')">✏️</button>
+                                            <button class="btn btn-sm btn-ghost" onclick="confirmDelete('category', '${c.id}')">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            break;
+            
+        case 'purchases':
+            content.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">💰</div>
+                    <h3 class="empty-state-title">Aucun achat</h3>
+                    <p class="empty-state-text">Les achats apparaîtront ici</p>
+                </div>
+            `;
+            break;
+            
+        case 'users':
+            content.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">👥</div>
+                    <h3 class="empty-state-title">Utilisateurs</h3>
+                    <p class="empty-state-text">Connectez Supabase pour voir les utilisateurs</p>
+                </div>
+            `;
+            break;
+    }
+}
+
+// =============================================
+// MODALS
+// =============================================
+function openTemplateModal(template = null) {
+    document.getElementById('templateModalTitle').textContent = template ? 'Modifier le Modèle' : 'Nouveau Modèle';
+    document.getElementById('templateId').value = template?.id || '';
+    document.getElementById('templateTitle').value = template?.title || '';
+    document.getElementById('templateShortDesc').value = template?.short_description || '';
+    document.getElementById('templateDescription').value = template?.description || '';
+    document.getElementById('templatePrice').value = template?.price || 0;
+    document.getElementById('templateBadge').value = template?.badge || '';
+    document.getElementById('templateImageUrl').value = template?.preview_image_url || '';
+    document.getElementById('templateFileUrl').value = template?.file_url || '';
+    document.getElementById('templateVideoUrl').value = template?.video_url || '';
+    document.getElementById('templateKeywords').value = template?.keywords?.join(', ') || '';
+    document.getElementById('templateIsFree').checked = template?.is_free || false;
+    document.getElementById('templateIsFeatured').checked = template?.is_featured || false;
+    document.getElementById('templateIsActive').checked = template?.is_active !== false;
+    
+    // Remplir les catégories
+    const categorySelect = document.getElementById('templateCategory');
+    categorySelect.innerHTML = categories.map(c => `
+        <option value="${c.id}" ${template?.category_id === c.id ? 'selected' : ''}>${c.icon} ${c.name}</option>
+    `).join('');
+    
+    document.getElementById('templateModal').classList.add('active');
+}
+
+function closeTemplateModal() {
+    document.getElementById('templateModal').classList.remove('active');
+}
+
+function openCategoryModal(category = null) {
+    document.getElementById('categoryModalTitle').textContent = category ? 'Modifier la Catégorie' : 'Nouvelle Catégorie';
+    document.getElementById('categoryId').value = category?.id || '';
+    document.getElementById('categoryName').value = category?.name || '';
+    document.getElementById('categoryIcon').value = category?.icon || '📁';
+    document.getElementById('categoryDescription').value = category?.description || '';
+    document.getElementById('categoryOrder').value = category?.display_order || 0;
+    
+    document.getElementById('categoryModal').classList.add('active');
+}
+
+function closeCategoryModal() {
+    document.getElementById('categoryModal').classList.remove('active');
+}
+
+function confirmDelete(type, id) {
+    document.getElementById('confirmMessage').textContent = `Êtes-vous sûr de vouloir supprimer ${type === 'template' ? 'ce modèle' : 'cette catégorie'} ?`;
+    document.getElementById('confirmBtn').onclick = () => {
+        if (type === 'template') deleteTemplate(id);
+        else deleteCategory(id);
+        closeConfirmModal();
+    };
+    document.getElementById('confirmModal').classList.add('active');
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirmModal').classList.remove('active');
+}
+
+// =============================================
+// CRUD OPERATIONS
+// =============================================
+async function handleTemplateSubmit(e) {
+    e.preventDefault();
+    
+    const id = document.getElementById('templateId').value;
+    const data = {
+        title: document.getElementById('templateTitle').value,
+        slug: slugify(document.getElementById('templateTitle').value),
+        category_id: document.getElementById('templateCategory').value,
+        short_description: document.getElementById('templateShortDesc').value,
+        description: document.getElementById('templateDescription').value,
+        price: parseFloat(document.getElementById('templatePrice').value) || 0,
+        badge: document.getElementById('templateBadge').value || null,
+        preview_image_url: document.getElementById('templateImageUrl').value || null,
+        file_url: document.getElementById('templateFileUrl').value || null,
+        video_url: document.getElementById('templateVideoUrl').value || null,
+        keywords: document.getElementById('templateKeywords').value.split(',').map(k => k.trim()).filter(k => k),
+        is_free: document.getElementById('templateIsFree').checked,
+        is_featured: document.getElementById('templateIsFeatured').checked,
+        is_active: document.getElementById('templateIsActive').checked
+    };
+    
+    if (supabase) {
+        if (id) {
+            await supabase.from('templates').update(data).eq('id', id);
+        } else {
+            await supabase.from('templates').insert(data);
+        }
+        await loadTemplates();
+    } else {
+        // Mode démo
+        if (id) {
+            const index = templates.findIndex(t => t.id === id);
+            if (index !== -1) templates[index] = { ...templates[index], ...data };
+        } else {
+            data.id = Date.now().toString();
+            data.category_name = categories.find(c => c.id === data.category_id)?.name;
+            templates.unshift(data);
+        }
+    }
+    
+    closeTemplateModal();
+    renderAdminPage();
+    showToast('Modèle enregistré avec succès', 'success');
+}
+
+async function handleCategorySubmit(e) {
+    e.preventDefault();
+    
+    const id = document.getElementById('categoryId').value;
+    const data = {
+        name: document.getElementById('categoryName').value,
+        slug: slugify(document.getElementById('categoryName').value),
+        icon: document.getElementById('categoryIcon').value || '📁',
+        description: document.getElementById('categoryDescription').value,
+        display_order: parseInt(document.getElementById('categoryOrder').value) || 0
+    };
+    
+    if (supabase) {
+        if (id) {
+            await supabase.from('categories').update(data).eq('id', id);
+        } else {
+            await supabase.from('categories').insert(data);
+        }
+        await loadCategories();
+    } else {
+        if (id) {
+            const index = categories.findIndex(c => c.id === id);
+            if (index !== -1) categories[index] = { ...categories[index], ...data };
+        } else {
+            data.id = Date.now().toString();
+            categories.push(data);
+        }
+    }
+    
+    closeCategoryModal();
+    renderCategories();
+    renderAdminPage();
+    showToast('Catégorie enregistrée avec succès', 'success');
+}
+
+function editTemplate(id) {
+    const template = templates.find(t => t.id === id);
+    if (template) openTemplateModal(template);
+}
+
+function editCategory(id) {
+    const category = categories.find(c => c.id === id);
+    if (category) openCategoryModal(category);
+}
+
+async function deleteTemplate(id) {
+    if (supabase) {
+        await supabase.from('templates').delete().eq('id', id);
+        await loadTemplates();
+    } else {
+        templates = templates.filter(t => t.id !== id);
+    }
+    renderAdminPage();
+    showToast('Modèle supprimé', 'success');
+}
+
+async function deleteCategory(id) {
+    if (supabase) {
+        await supabase.from('categories').delete().eq('id', id);
+        await loadCategories();
+    } else {
+        categories = categories.filter(c => c.id !== id);
+    }
+    renderCategories();
+    renderAdminPage();
+    showToast('Catégorie supprimée', 'success');
+}
+
+// =============================================
+// AUTH
+// =============================================
+async function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    if (supabase) {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+            showToast(error.message, 'error');
+            return;
+        }
+    } else {
+        // Mode démo
+        currentUser = { id: '1', email };
+        currentProfile = { id: '1', email, full_name: 'Admin Demo', role: 'admin' };
+    }
+    
+    showToast('Connexion réussie !', 'success');
+    updateNavbar();
+    navigate('home');
+}
+
+async function handleRegister(e) {
+    e.preventDefault();
+    const name = document.getElementById('registerName').value;
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
+    
+    if (supabase) {
+        const { error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: { data: { full_name: name } }
+        });
+        if (error) {
+            showToast(error.message, 'error');
+            return;
+        }
+        showToast('Compte créé ! Vérifiez votre email.', 'success');
+    } else {
+        currentUser = { id: '1', email };
+        currentProfile = { id: '1', email, full_name: name, role: 'user' };
+        showToast('Compte créé !', 'success');
+    }
+    
+    updateNavbar();
+    navigate('home');
+}
+
+async function handleLogout() {
+    if (supabase) {
+        await supabase.auth.signOut();
+    }
+    currentUser = null;
+    currentProfile = null;
+    updateNavbar();
+    navigate('home');
+    showToast('Déconnexion réussie', 'success');
+}
+
+// =============================================
+// PURCHASES
+// =============================================
+async function purchaseTemplate(templateId) {
+    if (!currentUser) {
+        showToast('Connectez-vous pour acheter', 'warning');
+        navigate('login');
+        return;
+    }
+    
+    const template = templates.find(t => t.id === templateId);
+    if (!template) return;
+    
+    // Ici, intégrer le paiement (Orange Money, Wave, etc.)
+    showToast('Redirection vers le paiement...', 'success');
+    
+    // Simulation d'achat
+    if (supabase) {
+        await supabase.from('purchases').insert({
+            user_id: currentUser.id,
+            template_id: templateId,
+            amount: template.price,
+            payment_status: 'completed',
+            payment_method: 'demo'
+        });
+    }
+    
+    showToast('Achat réussi ! Vous pouvez télécharger le modèle.', 'success');
+}
+
+async function downloadTemplate(templateId) {
+    const template = templates.find(t => t.id === templateId);
+    if (!template) return;
+    
+    if (template.file_url) {
+        window.open(template.file_url, '_blank');
+        
+        // Enregistrer le téléchargement
+        if (supabase && currentUser) {
+            await supabase.from('downloads').insert({
+                user_id: currentUser.id,
+                template_id: templateId
+            });
+        }
+        
+        showToast('Téléchargement démarré !', 'success');
+    } else {
+        showToast('Fichier non disponible', 'error');
+    }
+}
+
+function renderMyPurchases() {
+    const container = document.getElementById('myPurchasesList');
+    container.innerHTML = `
+        <div class="empty-state">
+            <div class="empty-state-icon">📦</div>
+            <h3 class="empty-state-title">Aucun achat</h3>
+            <p class="empty-state-text">Vos modèles achetés apparaîtront ici</p>
+            <button class="btn btn-primary" onclick="navigate('templates')">Explorer les modèles</button>
+        </div>
+    `;
+}
+
+// =============================================
+// SEARCH & FILTER
+// =============================================
+function handleSearch(e) {
+    if (e.key === 'Enter') performSearch();
+}
+
+function performSearch() {
+    const query = document.getElementById('searchInput').value.trim();
+    if (query) {
+        navigate('templates');
+        const filtered = templates.filter(t => 
+            t.title.toLowerCase().includes(query.toLowerCase()) ||
+            t.category_name?.toLowerCase().includes(query.toLowerCase())
+        );
+        document.getElementById('allTemplatesGrid').innerHTML = filtered.length ?
+            filtered.map(renderTemplateCard).join('') :
+            '<div class="empty-state"><div class="empty-state-icon">🔍</div><h3 class="empty-state-title">Aucun résultat</h3></div>';
+    }
+}
+
+function searchByTag(tag) {
+    document.getElementById('searchInput').value = tag;
+    performSearch();
+}
+
+function filterByCategory(categoryId) {
+    navigate('templates');
+    const filtered = templates.filter(t => t.category_id === categoryId);
+    document.getElementById('allTemplatesGrid').innerHTML = filtered.map(renderTemplateCard).join('');
+}
+
+function filterTemplates(filter, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const filtered = filter === 'all' ? templates : templates.filter(t => t.category_id === filter);
+    document.getElementById('allTemplatesGrid').innerHTML = filtered.map(renderTemplateCard).join('');
+}
+
+// =============================================
+// UTILITIES
+// =============================================
+function slugify(text) {
+    return text.toString().toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+}
+
+function formatPrice(price) {
+    return new Intl.NumberFormat('fr-FR').format(price) + ' FCFA';
+}
+
+function formatNumber(num) {
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toString();
+}
+
+function getInitials(name) {
+    if (!name) return '?';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+}
+
+function getVideoEmbed(url) {
+    if (!url) return '';
+    
+    // YouTube
+    const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+    if (ytMatch) {
+        return `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe>`;
+    }
+    
+    // Vimeo
+    const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+    if (vimeoMatch) {
+        return `<iframe src="https://player.vimeo.com/video/${vimeoMatch[1]}" allowfullscreen></iframe>`;
+    }
+    
+    return '';
+}
+
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+        <span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✗' : '⚠'}</span>
+        <span class="toast-message">${message}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+    `;
+    container.appendChild(toast);
+    
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => toast.remove(), 5000);
+}
+
+function toggleMobileMenu() {
+    const links = document.getElementById('navLinks');
+    links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+}
+
+// =============================================
+// INIT
+// =============================================
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
