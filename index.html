@@ -8,20 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root{--primary:#10b981;--primary-dark:#059669;--primary-light:#d1fae5;--secondary:#06b6d4;--orange:#f59e0b;--purple:#8b5cf6;--gray-900:#111827;--gray-800:#1f2937;--gray-700:#374151;--gray-600:#4b5563;--gray-500:#6b7280;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-200:#e5e7eb;--gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;--danger:#dc2626;--success:#16a34a;--warning:#f59e0b;--shadow:0 1px 3px rgba(0,0,0,0.1);--shadow-md:0 4px 6px -1px rgba(0,0,0,0.1);--shadow-lg:0 10px 15px -3px rgba(0,0,0,0.1);--radius:8px;--radius-lg:12px}
-        
-        /* Animations */
-        @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-        .hero-badge-dot{animation:pulse 2s infinite}
-        .hero-content{animation:fadeUp 0.6s ease-out}
-        .category-card{transition:all 0.3s ease}
-        .category-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
-        .template-card{transition:all 0.3s ease}
-        .template-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
-        .btn{transition:all 0.2s ease}
-        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(16,185,129,0.3)}
+        :root{--primary:#0066cc;--primary-dark:#0052a3;--primary-light:#e6f0ff;--secondary:#00a67e;--orange:#f5a623;--purple:#7c3aed;--gray-900:#111827;--gray-800:#1f2937;--gray-700:#374151;--gray-600:#4b5563;--gray-500:#6b7280;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-200:#e5e7eb;--gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;--danger:#dc2626;--success:#16a34a;--warning:#f59e0b;--shadow:0 1px 3px rgba(0,0,0,0.1);--shadow-md:0 4px 6px -1px rgba(0,0,0,0.1);--shadow-lg:0 10px 15px -3px rgba(0,0,0,0.1);--radius:8px;--radius-lg:12px}
         *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:'Inter',sans-serif;background:var(--white);color:var(--gray-800);line-height:1.6}
         .container{max-width:1280px;margin:0 auto;padding:0 24px}
         .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:var(--radius);font-weight:600;font-size:14px;cursor:pointer;transition:all 0.2s;text-decoration:none;border:none;font-family:inherit}
@@ -65,7 +52,7 @@
         .navbar{background:var(--white);border-bottom:1px solid var(--gray-200);position:sticky;top:0;z-index:1000}
         .nav-container{display:flex;align-items:center;justify-content:space-between;height:72px}
         .logo{display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer}
-        .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,#10b981,#06b6d4);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--white);font-weight:800;font-size:14px}
+        .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--white);font-weight:800;font-size:14px}
         .logo-text{font-size:22px;font-weight:800;color:var(--gray-900)}.logo-text span{color:var(--primary)}
         .nav-links{display:flex;align-items:center;gap:8px}
         .nav-link{padding:8px 16px;color:var(--gray-600);font-weight:500;font-size:15px;border-radius:var(--radius);transition:all 0.2s;cursor:pointer}
@@ -81,7 +68,7 @@
         .nav-dropdown-divider{height:1px;background:var(--gray-200);margin:4px 0}
         .mobile-menu-btn{display:none;background:none;border:none;font-size:24px;cursor:pointer}
         .page{display:none}.page.active{display:block}
-        .hero{background:linear-gradient(135deg,#ecfdf5 0%,#f0fdfa 50%,#eff6ff 100%);padding:80px 0}
+        .hero{background:linear-gradient(135deg,#f0f7ff 0%,#e8f4f8 50%,#f0fdf4 100%);padding:80px 0}
         .hero-content{max-width:800px;margin:0 auto;text-align:center}
         .hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--gray-200);padding:8px 16px;border-radius:50px;font-size:14px;font-weight:500;margin-bottom:24px;box-shadow:var(--shadow)}
         .hero-badge-dot{width:8px;height:8px;background:var(--secondary);border-radius:50%}
@@ -293,9 +280,9 @@
         <div class="footer-grid">
             <div class="footer-brand"><div class="logo"><div class="logo-icon">XL</div><span class="logo-text">Excel<span>Model</span></span></div><p class="footer-desc">Modèles Excel professionnels pour les entreprises africaines.</p></div>
             <div><h4 class="footer-title">Liens</h4><ul class="footer-links"><li><a href="#" onclick="App.navigate('templates')">Modèles</a></li><li><a href="#" onclick="App.navigate('pricing')">Tarifs</a></li></ul></div>
-            <div><h4 class="footer-title">Contact</h4><ul class="footer-links"><li><a href="https://wa.me/221773684203">WhatsApp</a></li><li><a href="/cdn-cgi/l/email-protection#196a786e787d7e6a7875707f597e74787075377a7674">Email</a></li></ul></div>
+            <div><h4 class="footer-title">Contact</h4><ul class="footer-links"><li><a href="https://wa.me/221773684203">WhatsApp</a></li><li><a href="mailto:sawadgsalif@gmail.com">Email</a></li></ul></div>
         </div>
-        <div class="footer-bottom"><p class="footer-copy">© 2026 ExcelModel | <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="98ebf9eff9fcffebf9f4f1fed8fff5f9f1f4b6fbf7f5">[email&#160;protected]</a> | +221 77 368 42 03</p></div>
+        <div class="footer-bottom"><p class="footer-copy">© 2026 ExcelModel | sawadgsalif@gmail.com | +221 77 368 42 03</p></div>
     </div></footer>
 
     <!-- TEMPLATE MODAL WITH FILE UPLOAD -->
@@ -364,7 +351,7 @@
         <div class="modal-body"><p id="confirmMessage">Êtes-vous sûr ?</p></div>
         <div class="modal-footer"><button class="btn btn-outline" onclick="App.closeModal('confirmModal')">Annuler</button><button class="btn btn-danger" id="confirmBtn">Supprimer</button></div>
     </div></div>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const SUPABASE_URL = 'https://nnkkeetruqonyjykuxre.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ua2tlZXRydXFvbnlqeWt1eHJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzMTQyMDAsImV4cCI6MjA4Mzg5MDIwMH0.y24yrgbRkg5PjU_HQ6O3nZxXOpv9yN5OLCYAuwu1gAo';
 const ADMIN_EMAIL = 'sawadgsalif@gmail.com';
@@ -779,4 +766,11 @@ const App = {
     goToPage(p) { const max = Math.ceil(this.filteredTemplates.length / ITEMS_PER_PAGE); if (p >= 1 && p <= max) { this.currentPage = p; this.renderAllTemplates(); window.scrollTo({ top: 200, behavior: 'smooth' }); } },
     download(id) { const t = this.templates.find(x => x.id === id); if (t?.file_url) window.open(t.file_url, '_blank'); else this.toast('Fichier non disponible', 'error'); },
     formatPrice(p) { return new Intl.NumberFormat('fr-FR').format(p || 0) + ' FCFA'; },
-    toast(msg, type = 'success') { const c = document.getElementById('toastContainer'); const t = document.createElement('div'); t.className = 'toast ' + type; t.innerHTML = `<span>${type === 'success' ? '✓' : '⚠'}</span><span class="toast-message">${msg}</span><button class="toast-close" onclick="this.parentElement.remove()">×</button>`; c.appendChild(t); setTimeout(() => t.classList.add('show'), 10
+    toast(msg, type = 'success') { const c = document.getElementById('toastContainer'); const t = document.createElement('div'); t.className = 'toast ' + type; t.innerHTML = `<span>${type === 'success' ? '✓' : '⚠'}</span><span class="toast-message">${msg}</span><button class="toast-close" onclick="this.parentElement.remove()">×</button>`; c.appendChild(t); setTimeout(() => t.classList.add('show'), 10); setTimeout(() => t.remove(), 4000); },
+    toggleMobileMenu() { const l = document.querySelector('.nav-links'); l.style.display = l.style.display === 'flex' ? 'none' : 'flex'; }
+};
+
+document.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+</body>
+</html>
