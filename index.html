@@ -664,9 +664,9 @@ const App = {
             }
             
             const id = document.getElementById('templateId').value;
+            const title = document.getElementById('templateTitle').value;
             const data = {
-                title: document.getElementById('templateTitle').value,
-                slug: document.getElementById('templateTitle').value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+                title: title,
                 category_id: document.getElementById('templateCategoryId').value,
                 short_description: document.getElementById('templateShortDesc').value || null,
                 description: document.getElementById('templateDescription').value || null,
@@ -680,6 +680,11 @@ const App = {
                 is_featured: document.getElementById('templateIsFeatured').checked,
                 is_active: document.getElementById('templateIsActive').checked
             };
+            
+            // Ajouter le slug seulement pour les nouveaux modèles
+            if (!id) {
+                data.slug = title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            }
             
             const { error } = id ? await this.supabase.from('templates').update(data).eq('id', id) : await this.supabase.from('templates').insert(data);
             if (error) throw error;
@@ -701,14 +706,18 @@ const App = {
     async saveCategory(e) {
         e.preventDefault();
         const id = document.getElementById('categoryId').value;
+        const name = document.getElementById('categoryName').value;
         const data = {
-            name: document.getElementById('categoryName').value,
-            slug: document.getElementById('categoryName').value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-'),
+            name: name,
             icon: document.getElementById('categoryIcon').value || '📁',
             description: document.getElementById('categoryDescription').value || null,
             display_order: parseInt(document.getElementById('categoryOrder').value) || 0,
             is_active: true
         };
+        // Ajouter le slug seulement pour les nouvelles catégories
+        if (!id) {
+            data.slug = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-');
+        }
         try {
             const { error } = id ? await this.supabase.from('categories').update(data).eq('id', id) : await this.supabase.from('categories').insert(data);
             if (error) throw error;
