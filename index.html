@@ -1,584 +1,919 @@
-ased ? `
-                            <button class="btn btn-primary btn-block btn-lg" onclick="downloadTemplate('${template.id}')">
-                                ⬇️ Télécharger
-                            </button>
-                        ` : `
-                            <button class="btn btn-primary btn-block btn-lg" onclick="purchaseTemplate('${template.id}')">
-                                💳 Acheter maintenant
-                            </button>
-                        `}
-                        <button class="btn btn-ghost btn-block" onclick="navigate('templates')">← Retour aux modèles</button>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExcelModel - Modèles Excel Professionnels</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root{--primary:#10b981;--primary-dark:#059669;--primary-light:#34d399;--accent:#f59e0b;--purple:#8b5cf6;--cyan:#06b6d4;--pink:#ec4899;--dark-900:#0a0a0f;--dark-800:#12121a;--dark-700:#1a1a24;--dark-600:#252532;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-500:#6b7280;--white:#fff;--gradient-main:linear-gradient(135deg,#10b981 0%,#06b6d4 50%,#8b5cf6 100%);--gradient-gold:linear-gradient(135deg,#f59e0b,#fbbf24);--glass:rgba(255,255,255,0.03);--glass-border:rgba(255,255,255,0.08);--shadow-glow:0 0 60px rgba(16,185,129,0.15);--danger:#ef4444;--success:#10b981;--warning:#f59e0b}
+        *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:'Outfit',sans-serif;background:var(--dark-900);color:var(--white);line-height:1.6;min-height:100vh}
+        .bg-animation{position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 20% 80%,rgba(16,185,129,0.08) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(139,92,246,0.08) 0%,transparent 50%)}
+        .container{max-width:1400px;margin:0 auto;padding:0 2rem}.hidden{display:none!important}.gradient-text{background:var(--gradient-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .btn{padding:0.75rem 1.5rem;border-radius:12px;font-weight:600;cursor:pointer;transition:all 0.3s;text-decoration:none;border:none;display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;font-family:inherit;font-size:0.95rem}
+        .btn-primary{background:var(--gradient-main);color:var(--white)}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 40px rgba(16,185,129,0.3)}
+        .btn-ghost{background:transparent;color:var(--gray-300);border:1px solid var(--glass-border)}.btn-ghost:hover{background:var(--glass);border-color:var(--gray-400)}
+        .btn-danger{background:var(--danger);color:var(--white)}.btn-sm{padding:0.5rem 1rem;font-size:0.85rem}.btn-lg{padding:1rem 2rem;font-size:1.05rem}.btn-block{width:100%}.btn:disabled{opacity:0.5;cursor:not-allowed}
+        .form-group{margin-bottom:1.5rem}.form-label{display:block;margin-bottom:0.5rem;font-weight:500;color:var(--gray-300)}
+        .form-input,.form-textarea,.form-select{width:100%;padding:0.875rem 1rem;background:var(--dark-700);border:1px solid var(--glass-border);border-radius:10px;color:var(--white);font-family:inherit;font-size:1rem;transition:all 0.3s}
+        .form-input:focus,.form-textarea:focus,.form-select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(16,185,129,0.1)}
+        .form-input::placeholder{color:var(--gray-500)}.form-textarea{min-height:120px;resize:vertical}.form-select{cursor:pointer}
+        .form-checkbox{display:flex;align-items:center;gap:0.75rem;cursor:pointer}.form-checkbox input{width:20px;height:20px;accent-color:var(--primary)}
+        .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2rem;transition:all 0.4s}.navbar.scrolled{background:rgba(10,10,15,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border)}
+        .nav-container{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+        .logo{display:flex;align-items:center;gap:0.75rem;text-decoration:none;cursor:pointer}.logo-icon{width:44px;height:44px;background:var(--gradient-main);border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--white)}
+        .logo-text{font-size:1.5rem;font-weight:800;background:var(--gradient-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .nav-links{display:flex;gap:0.5rem}.nav-link{text-decoration:none;color:var(--gray-400);font-weight:500;padding:0.6rem 1rem;border-radius:8px;transition:all 0.3s;cursor:pointer}.nav-link:hover,.nav-link.active{color:var(--white);background:var(--glass)}
+        .nav-actions{display:flex;gap:1rem;align-items:center}
+        .nav-user{display:flex;align-items:center;gap:0.75rem;padding:0.5rem 1rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;cursor:pointer}
+        .nav-user-avatar{width:32px;height:32px;background:var(--gradient-main);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem}.nav-user-name{font-weight:500}
+        .nav-dropdown{position:relative}.nav-dropdown-menu{position:absolute;top:100%;right:0;margin-top:0.5rem;background:var(--dark-800);border:1px solid var(--glass-border);border-radius:12px;min-width:200px;padding:0.5rem;opacity:0;visibility:hidden;transform:translateY(-10px);transition:all 0.3s}
+        .nav-dropdown:hover .nav-dropdown-menu{opacity:1;visibility:visible;transform:translateY(0)}
+        .nav-dropdown-item{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1rem;border-radius:8px;color:var(--gray-300);cursor:pointer;transition:all 0.2s}.nav-dropdown-item:hover{background:var(--glass);color:var(--white)}
+        .nav-dropdown-divider{height:1px;background:var(--glass-border);margin:0.5rem 0}.mobile-menu-btn{display:none;background:none;border:none;color:var(--white);font-size:1.5rem;cursor:pointer}
+        .page{display:none;padding-top:80px;min-height:100vh}.page.active{display:block}
+        .hero{padding:4rem 0 6rem}.hero-content{text-align:center;max-width:800px;margin:0 auto}
+        .hero-badge{display:inline-flex;align-items:center;gap:0.5rem;background:var(--glass);border:1px solid var(--glass-border);color:var(--primary-light);padding:0.5rem 1rem;border-radius:50px;font-size:0.9rem;margin-bottom:1.5rem}
+        .hero h1{font-size:3.5rem;font-weight:900;line-height:1.1;margin-bottom:1.5rem;letter-spacing:-1px}.hero-subtitle{font-size:1.2rem;color:var(--gray-400);margin-bottom:2.5rem;line-height:1.7}
+        .hero-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+        .search-section{margin-bottom:4rem}.search-box{background:var(--dark-800);border:1px solid var(--glass-border);border-radius:16px;padding:0.5rem;display:flex;align-items:center;gap:0.5rem;max-width:700px;margin:0 auto}
+        .search-box:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px rgba(16,185,129,0.1)}.search-icon{padding:0.75rem;color:var(--gray-400)}
+        .search-box input{flex:1;background:transparent;border:none;outline:none;color:var(--white);font-size:1rem;font-family:inherit}.search-box input::placeholder{color:var(--gray-500)}
+        .search-btn{background:var(--gradient-main);color:var(--white);border:none;padding:0.875rem 1.5rem;border-radius:12px;font-weight:600;cursor:pointer}
+        .search-tags{display:flex;justify-content:center;gap:0.75rem;margin-top:1rem;flex-wrap:wrap}
+        .search-tag{padding:0.5rem 1rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:50px;font-size:0.9rem;color:var(--gray-300);cursor:pointer;transition:all 0.3s}.search-tag:hover{border-color:var(--primary);color:var(--primary)}
+        .section-header{text-align:center;margin-bottom:3rem}.section-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);color:var(--purple);padding:0.5rem 1rem;border-radius:50px;font-size:0.85rem;font-weight:600;margin-bottom:1rem}
+        .section-title{font-size:2.5rem;font-weight:800;margin-bottom:1rem}.section-subtitle{color:var(--gray-400);font-size:1.1rem;max-width:600px;margin:0 auto}
+        .categories-section{margin-bottom:4rem}.categories-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem}
+        .category-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.3s;text-decoration:none;color:inherit}
+        .category-card:hover{transform:translateY(-4px);border-color:var(--primary);box-shadow:var(--shadow-glow)}.category-icon{font-size:2rem;margin-bottom:0.75rem}.category-name{font-weight:600;margin-bottom:0.25rem}.category-count{font-size:0.85rem;color:var(--gray-400)}
+        .templates-section{padding:3rem 0}.templates-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+        .templates-filters{display:flex;gap:0.5rem;flex-wrap:wrap}
+        .filter-btn{padding:0.5rem 1rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;color:var(--gray-400);font-weight:500;cursor:pointer;transition:all 0.3s;font-family:inherit}
+        .filter-btn:hover,.filter-btn.active{background:rgba(16,185,129,0.1);border-color:var(--primary);color:var(--primary)}
+        .templates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem}
+        .template-card{background:var(--dark-800);border:1px solid var(--glass-border);border-radius:20px;overflow:hidden;cursor:pointer;transition:all 0.4s}
+        .template-card:hover{transform:translateY(-6px);border-color:var(--primary);box-shadow:0 20px 60px rgba(0,0,0,0.4),var(--shadow-glow)}
+        .template-preview{height:180px;background:var(--dark-700);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+        .template-preview img{width:100%;height:100%;object-fit:cover}.template-preview-placeholder{display:flex;flex-direction:column;align-items:center;gap:0.5rem;color:var(--gray-500)}.template-preview-placeholder span{font-size:3rem}
+        .template-badge{position:absolute;top:12px;left:12px;padding:0.35rem 0.75rem;border-radius:6px;font-size:0.75rem;font-weight:700;text-transform:uppercase}
+        .template-badge.popular{background:var(--gradient-gold);color:var(--dark-900)}.template-badge.new{background:var(--gradient-main);color:var(--white)}
+        .template-badge.premium{background:linear-gradient(135deg,var(--purple),var(--pink));color:var(--white)}.template-badge.free{background:var(--success);color:var(--white)}
+        .template-info{padding:1.5rem}.template-category{font-size:0.8rem;color:var(--primary);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.5rem}
+        .template-title{font-size:1.1rem;font-weight:700;margin-bottom:0.75rem;line-height:1.4}.template-meta{display:flex;align-items:center;justify-content:space-between}
+        .template-stats{display:flex;gap:1rem;color:var(--gray-400);font-size:0.85rem}.template-stats span{display:flex;align-items:center;gap:0.3rem}
+        .template-price{font-family:'JetBrains Mono',monospace;font-weight:700}.template-price.free{color:var(--success)}.template-price.paid{color:var(--primary-light)}
+        .template-detail{padding:2rem 0 4rem}.template-detail-grid{display:grid;grid-template-columns:1fr 400px;gap:3rem}
+        .template-detail-image{background:var(--dark-800);border:1px solid var(--glass-border);border-radius:20px;overflow:hidden;margin-bottom:2rem}
+        .template-detail-image img{width:100%;height:auto;display:block}
+        .template-detail-image-placeholder{height:400px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;color:var(--gray-500)}.template-detail-image-placeholder span{font-size:5rem}
+        .template-detail-video{margin-bottom:2rem}.template-detail-video iframe{width:100%;height:400px;border-radius:16px;border:1px solid var(--glass-border)}
+        .template-detail-content h1{font-size:2rem;font-weight:800;margin-bottom:1rem}
+        .template-detail-meta{display:flex;gap:1.5rem;margin-bottom:2rem;flex-wrap:wrap}.template-detail-meta-item{display:flex;align-items:center;gap:0.5rem;color:var(--gray-400)}
+        .template-detail-description{color:var(--gray-300);line-height:1.8;margin-bottom:2rem}
+        .template-detail-keywords{display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:2rem}
+        .template-keyword{padding:0.35rem 0.75rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:6px;font-size:0.85rem;color:var(--gray-400)}
+        .sidebar-card{background:var(--dark-800);border:1px solid var(--glass-border);border-radius:20px;padding:2rem;position:sticky;top:100px}
+        .sidebar-price{margin-bottom:1.5rem}.sidebar-price-value{font-family:'JetBrains Mono',monospace;font-size:2.5rem;font-weight:800}
+        .sidebar-price-value.free{color:var(--success)}.sidebar-price-value.paid{background:var(--gradient-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .sidebar-price-label{color:var(--gray-400);font-size:0.9rem}.sidebar-actions{display:flex;flex-direction:column;gap:1rem;margin-bottom:2rem}
+        .sidebar-features{border-top:1px solid var(--glass-border);padding-top:1.5rem}.sidebar-features-title{font-weight:600;margin-bottom:1rem}
+        .sidebar-feature{display:flex;align-items:center;gap:0.75rem;padding:0.5rem 0;color:var(--gray-300)}.sidebar-feature-icon{color:var(--primary)}
+        .admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--glass-border)}
+        .admin-tabs{display:flex;gap:0.5rem;margin-bottom:2rem}
+        .admin-tab{padding:0.75rem 1.5rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;color:var(--gray-400);cursor:pointer;transition:all 0.3s;font-weight:500}
+        .admin-tab:hover,.admin-tab.active{background:rgba(16,185,129,0.1);border-color:var(--primary);color:var(--primary)}
+        .table-container{background:var(--dark-800);border:1px solid var(--glass-border);border-radius:16px;overflow:hidden}
+        .table{width:100%;border-collapse:collapse}.table th,.table td{padding:1rem 1.25rem;text-align:left;border-bottom:1px solid var(--glass-border)}
+        .table th{background:var(--dark-700);font-weight:600;color:var(--gray-300);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px}
+        .table tr:last-child td{border-bottom:none}.table tr:hover td{background:var(--glass)}.table-actions{display:flex;gap:0.5rem}
+        .table-badge{padding:0.25rem 0.75rem;border-radius:20px;font-size:0.8rem;font-weight:600}
+        .table-badge.success{background:rgba(16,185,129,0.2);color:var(--success)}.table-badge.warning{background:rgba(245,158,11,0.2);color:var(--warning)}.table-badge.danger{background:rgba(239,68,68,0.2);color:var(--danger)}
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:2000;display:flex;align-items:center;justify-content:center;padding:2rem;opacity:0;visibility:hidden;transition:all 0.3s}
+        .modal-overlay.active{opacity:1;visibility:visible}
+        .modal{background:var(--dark-800);border:1px solid var(--glass-border);border-radius:20px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;transform:translateY(20px);transition:transform 0.3s}
+        .modal-overlay.active .modal{transform:translateY(0)}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;border-bottom:1px solid var(--glass-border)}
+        .modal-title{font-size:1.25rem;font-weight:700}.modal-close{background:none;border:none;color:var(--gray-400);font-size:1.5rem;cursor:pointer;padding:0.5rem;line-height:1}.modal-close:hover{color:var(--white)}
+        .modal-body{padding:2rem}.modal-footer{display:flex;justify-content:flex-end;gap:1rem;padding:1.5rem 2rem;border-top:1px solid var(--glass-border)}
+        .toast-container{position:fixed;top:100px;right:2rem;z-index:3000;display:flex;flex-direction:column;gap:0.75rem}
+        .toast{background:var(--dark-800);border:1px solid var(--glass-border);border-radius:12px;padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem;min-width:300px;transform:translateX(120%);transition:transform 0.3s}
+        .toast.show{transform:translateX(0)}.toast.success{border-color:var(--success)}.toast.error{border-color:var(--danger)}.toast.warning{border-color:var(--warning)}
+        .toast-icon{font-size:1.25rem}.toast-message{flex:1}.toast-close{background:none;border:none;color:var(--gray-400);cursor:pointer;padding:0.25rem}
+        .auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+        .auth-card{background:var(--dark-800);border:1px solid var(--glass-border);border-radius:24px;padding:3rem;width:100%;max-width:450px}
+        .auth-header{text-align:center;margin-bottom:2rem}.auth-title{font-size:1.75rem;font-weight:800;margin-bottom:0.5rem}.auth-subtitle{color:var(--gray-400)}
+        .auth-footer{text-align:center;margin-top:1.5rem;color:var(--gray-400)}.auth-footer a{color:var(--primary);text-decoration:none;font-weight:500}
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-bottom:2rem}
+        .stat-card{background:var(--dark-800);border:1px solid var(--glass-border);border-radius:16px;padding:1.5rem}
+        .stat-card-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1rem}
+        .stat-card-icon.green{background:rgba(16,185,129,0.2)}.stat-card-icon.purple{background:rgba(139,92,246,0.2)}.stat-card-icon.orange{background:rgba(245,158,11,0.2)}.stat-card-icon.cyan{background:rgba(6,182,212,0.2)}
+        .stat-card-value{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;margin-bottom:0.25rem}.stat-card-label{color:var(--gray-400);font-size:0.9rem}
+        .empty-state{text-align:center;padding:4rem 2rem}.empty-state-icon{font-size:4rem;margin-bottom:1rem}.empty-state-title{font-size:1.5rem;font-weight:700;margin-bottom:0.5rem}.empty-state-text{color:var(--gray-400);margin-bottom:2rem}
+        .loading{display:flex;align-items:center;justify-content:center;padding:4rem}.spinner{width:40px;height:40px;border:3px solid var(--glass-border);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .footer{background:var(--dark-800);padding:4rem 2rem 2rem;border-top:1px solid var(--glass-border);margin-top:auto}
+        .footer-grid{display:grid;grid-template-columns:2fr repeat(3,1fr);gap:3rem;margin-bottom:3rem}.footer-brand .logo{margin-bottom:1rem}.footer-desc{color:var(--gray-400);font-size:0.95rem;line-height:1.7}
+        .footer-title{font-weight:700;margin-bottom:1rem}.footer-links{list-style:none}.footer-links li{margin-bottom:0.75rem}.footer-links a{color:var(--gray-400);text-decoration:none;transition:color 0.3s}.footer-links a:hover{color:var(--primary)}
+        .footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:2rem;border-top:1px solid var(--glass-border);flex-wrap:wrap;gap:1rem}.footer-copy{color:var(--gray-500);font-size:0.9rem}
+        @media(max-width:1024px){.template-detail-grid{grid-template-columns:1fr}.sidebar-card{position:static}.footer-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:768px){.nav-links{display:none}.mobile-menu-btn{display:block}.hero h1{font-size:2.25rem}.templates-grid{grid-template-columns:1fr}.section-title{font-size:2rem}.footer-grid{grid-template-columns:1fr}.admin-tabs{flex-wrap:wrap}.table-container{overflow-x:auto}}
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="App.navigate('home')">
+                <div class="logo-icon">XL</div>
+                <span class="logo-text">ExcelModel</span>
+            </div>
+            <div class="nav-links" id="navLinks">
+                <span class="nav-link" onclick="App.navigate('home')">Accueil</span>
+                <span class="nav-link" onclick="App.navigate('templates')">Modèles</span>
+                <span class="nav-link" onclick="App.navigate('pricing')">Tarifs</span>
+            </div>
+            <div class="nav-actions" id="navActions"></div>
+            <button class="mobile-menu-btn" onclick="App.toggleMobileMenu()">☰</button>
+        </div>
+    </nav>
+
+    <main id="app">
+        <!-- Home Page -->
+        <div class="page active" id="page-home">
+            <div class="container">
+                <section class="hero">
+                    <div class="hero-content">
+                        <div class="hero-badge">✨ +5,000 modèles professionnels</div>
+                        <h1>Modèles <span class="gradient-text">Excel</span> Professionnels</h1>
+                        <p class="hero-subtitle">Téléchargez des modèles Excel prêts à l'emploi pour votre entreprise. Tableaux de bord, finances, RH, gestion de projet. 100% éditables.</p>
+                        <div class="hero-actions">
+                            <button class="btn btn-primary btn-lg" onclick="App.navigate('templates')">Explorer les Modèles</button>
+                            <button class="btn btn-ghost btn-lg" onclick="App.navigate('pricing')">Voir les Tarifs</button>
+                        </div>
                     </div>
-                    <div class="sidebar-features">
-                        <div class="sidebar-features-title">Ce qui est inclus :</div>
-                        <div class="sidebar-feature"><span class="sidebar-feature-icon">✓</span> Fichier Excel complet</div>
-                        <div class="sidebar-feature"><span class="sidebar-feature-icon">✓</span> 100% éditable</div>
-                        <div class="sidebar-feature"><span class="sidebar-feature-icon">✓</span> Formules pré-configurées</div>
-                        <div class="sidebar-feature"><span class="sidebar-feature-icon">✓</span> Compatible Excel & Google Sheets</div>
-                        <div class="sidebar-feature"><span class="sidebar-feature-icon">✓</span> Support par email</div>
+                </section>
+                <section class="search-section">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Rechercher un modèle..." onkeyup="if(event.key==='Enter')App.search()">
+                        <button class="search-btn" onclick="App.search()">Rechercher</button>
+                    </div>
+                    <div class="search-tags" id="searchTags"></div>
+                </section>
+                <section class="categories-section">
+                    <div class="section-header">
+                        <div class="section-badge">📁 Catégories</div>
+                        <h2 class="section-title">Parcourir par <span class="gradient-text">Catégorie</span></h2>
+                    </div>
+                    <div class="categories-grid" id="categoriesGrid"></div>
+                </section>
+                <section class="templates-section">
+                    <div class="templates-header">
+                        <h2 class="section-title">Modèles <span class="gradient-text">Populaires</span></h2>
+                    </div>
+                    <div class="templates-grid" id="featuredTemplatesGrid"></div>
+                </section>
+            </div>
+        </div>
+        
+        <!-- Templates Page -->
+        <div class="page" id="page-templates">
+            <div class="container">
+                <section class="templates-section" style="padding-top:2rem">
+                    <div class="templates-header">
+                        <h2 class="section-title">Tous les <span class="gradient-text">Modèles</span></h2>
+                        <div class="templates-filters" id="templatesFilters"></div>
+                    </div>
+                    <div class="templates-grid" id="allTemplatesGrid"></div>
+                </section>
+            </div>
+        </div>
+        
+        <!-- Template Detail -->
+        <div class="page" id="page-template-detail">
+            <div class="container">
+                <section class="template-detail" id="templateDetail"></section>
+            </div>
+        </div>
+        
+        <!-- Login -->
+        <div class="page" id="page-login">
+            <div class="auth-page">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <div class="logo" style="justify-content:center;margin-bottom:1rem">
+                            <div class="logo-icon">XL</div>
+                            <span class="logo-text">ExcelModel</span>
+                        </div>
+                        <h1 class="auth-title">Connexion</h1>
+                        <p class="auth-subtitle">Accédez à votre compte</p>
+                    </div>
+                    <form onsubmit="App.login(event)">
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" id="loginEmail" required placeholder="votre@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mot de passe</label>
+                            <input type="password" class="form-input" id="loginPassword" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block btn-lg">Se connecter</button>
+                    </form>
+                    <div class="auth-footer">Pas encore de compte ? <a href="#" onclick="App.navigate('register')">S'inscrire</a></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Register -->
+        <div class="page" id="page-register">
+            <div class="auth-page">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1 class="auth-title">Créer un compte</h1>
+                        <p class="auth-subtitle">Rejoignez ExcelModel</p>
+                    </div>
+                    <form onsubmit="App.register(event)">
+                        <div class="form-group">
+                            <label class="form-label">Nom complet</label>
+                            <input type="text" class="form-input" id="registerName" required placeholder="Votre nom">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" id="registerEmail" required placeholder="votre@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mot de passe</label>
+                            <input type="password" class="form-input" id="registerPassword" required placeholder="Min. 6 caractères" minlength="6">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block btn-lg">Créer mon compte</button>
+                    </form>
+                    <div class="auth-footer">Déjà un compte ? <a href="#" onclick="App.navigate('login')">Se connecter</a></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- My Purchases -->
+        <div class="page" id="page-my-purchases">
+            <div class="container" style="padding-top:2rem;padding-bottom:4rem">
+                <h1 class="section-title" style="margin-bottom:2rem">Mes <span class="gradient-text">Achats</span></h1>
+                <div id="myPurchasesList"></div>
+            </div>
+        </div>
+        
+        <!-- Admin -->
+        <div class="page" id="page-admin">
+            <div class="container" style="padding-top:2rem;padding-bottom:4rem">
+                <div class="admin-header">
+                    <h1 class="section-title">Administration</h1>
+                    <button class="btn btn-primary" onclick="App.openTemplateModal()">+ Nouveau Modèle</button>
+                </div>
+                <div class="stats-grid" id="adminStats"></div>
+                <div class="admin-tabs" id="adminTabs">
+                    <button class="admin-tab active" data-tab="templates">📄 Modèles</button>
+                    <button class="admin-tab" data-tab="categories">📁 Catégories</button>
+                    <button class="admin-tab" data-tab="purchases">💰 Achats</button>
+                </div>
+                <div id="adminContent"></div>
+            </div>
+        </div>
+        
+        <!-- Pricing -->
+        <div class="page" id="page-pricing">
+            <div class="container" style="padding-top:2rem;padding-bottom:4rem">
+                <div class="section-header">
+                    <div class="section-badge">💎 Tarifs</div>
+                    <h2 class="section-title">Choisissez Votre <span class="gradient-text">Formule</span></h2>
+                </div>
+                <div class="stats-grid" style="max-width:900px;margin:0 auto">
+                    <div class="stat-card" style="text-align:center">
+                        <h3 style="font-size:1.3rem;margin-bottom:0.5rem">Mensuel</h3>
+                        <p style="color:var(--gray-400);margin-bottom:1.5rem">Parfait pour tester</p>
+                        <div class="stat-card-value gradient-text">9.900</div>
+                        <p style="color:var(--gray-400);margin-bottom:1.5rem">FCFA/mois</p>
+                        <ul style="text-align:left;list-style:none;margin-bottom:1.5rem">
+                            <li style="padding:0.5rem 0;color:var(--gray-300)">✓ Accès à tous les modèles</li>
+                            <li style="padding:0.5rem 0;color:var(--gray-300)">✓ Téléchargements illimités</li>
+                            <li style="padding:0.5rem 0;color:var(--gray-300)">✓ Support email</li>
+                        </ul>
+                        <button class="btn btn-ghost btn-block">Choisir</button>
+                    </div>
+                    <div class="stat-card" style="text-align:center;border-color:var(--primary);position:relative">
+                        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gradient-main);padding:0.35rem 1rem;border-radius:20px;font-size:0.8rem;font-weight:700">Populaire</div>
+                        <h3 style="font-size:1.3rem;margin-bottom:0.5rem">Annuel</h3>
+                        <p style="color:var(--gray-400);margin-bottom:1.5rem">Économisez 50%</p>
+                        <div class="stat-card-value gradient-text">59.000</div>
+                        <p style="color:var(--gray-400);margin-bottom:1.5rem">FCFA/an</p>
+                        <ul style="text-align:left;list-style:none;margin-bottom:1.5rem">
+                            <li style="padding:0.5rem 0;color:var(--gray-300)">✓ Tout du plan mensuel</li>
+                            <li style="padding:0.5rem 0;color:var(--gray-300)">✓ Modèles Premium</li>
+                            <li style="padding:0.5rem 0;color:var(--gray-300)">✓ Support WhatsApp</li>
+                        </ul>
+                        <button class="btn btn-primary btn-block">Choisir</button>
                     </div>
                 </div>
             </div>
         </div>
-    `;
-}
-
-function renderFilters() {
-    const filters = document.getElementById('templatesFilters');
-    filters.innerHTML = `
-        <button class="filter-btn active" onclick="filterTemplates('all', this)">Tous</button>
-        ${categories.map(cat => `
-            <button class="filter-btn" onclick="filterTemplates('${cat.id}', this)">${cat.icon} ${cat.name}</button>
-        `).join('')}
-    `;
-}
-
-// =============================================
-// ADMIN PANEL
-// =============================================
-function isAdmin() {
-    return currentProfile?.role === 'admin' || currentProfile?.role === 'super_admin';
-}
-
-async function renderAdminPage() {
-    // Stats
-    document.getElementById('adminStats').innerHTML = `
-        <div class="stat-card">
-            <div class="stat-card-icon green">📄</div>
-            <div class="stat-card-value">${templates.length}</div>
-            <div class="stat-card-label">Modèles</div>
+    </main>
+    
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo"><div class="logo-icon">XL</div><span class="logo-text">ExcelModel</span></div>
+                    <p class="footer-desc">La première plateforme de modèles Excel professionnels pour les entreprises africaines.</p>
+                </div>
+                <div><h4 class="footer-title">Catégories</h4><ul class="footer-links"><li><a href="#">Tableaux de bord</a></li><li><a href="#">Finance</a></li><li><a href="#">RH & Paie</a></li></ul></div>
+                <div><h4 class="footer-title">Entreprise</h4><ul class="footer-links"><li><a href="#">À propos</a></li><li><a href="#">Blog</a></li><li><a href="#">Contact</a></li></ul></div>
+                <div><h4 class="footer-title">Support</h4><ul class="footer-links"><li><a href="#">FAQ</a></li><li><a href="#">WhatsApp</a></li><li><a href="#">Email</a></li></ul></div>
+            </div>
+            <div class="footer-bottom"><p class="footer-copy">© 2026 ExcelModel. Tous droits réservés.</p></div>
         </div>
-        <div class="stat-card">
-            <div class="stat-card-icon purple">📁</div>
-            <div class="stat-card-value">${categories.length}</div>
-            <div class="stat-card-label">Catégories</div>
+    </footer>
+    
+    <!-- Template Modal -->
+    <div class="modal-overlay" id="templateModal">
+        <div class="modal" style="max-width:700px">
+            <div class="modal-header">
+                <h2 class="modal-title" id="templateModalTitle">Nouveau Modèle</h2>
+                <button class="modal-close" onclick="App.closeModal('templateModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="templateForm" onsubmit="App.saveTemplate(event)">
+                    <input type="hidden" id="templateId">
+                    <div class="form-group"><label class="form-label">Titre *</label><input type="text" class="form-input" id="templateTitle" required></div>
+                    <div class="form-group"><label class="form-label">Catégorie *</label><select class="form-select" id="templateCategoryId" required></select></div>
+                    <div class="form-group"><label class="form-label">Description courte</label><input type="text" class="form-input" id="templateShortDesc" maxlength="500"></div>
+                    <div class="form-group"><label class="form-label">Description complète</label><textarea class="form-textarea" id="templateDescription" rows="4"></textarea></div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                        <div class="form-group"><label class="form-label">Prix (FCFA)</label><input type="number" class="form-input" id="templatePrice" value="0" min="0"></div>
+                        <div class="form-group"><label class="form-label">Badge</label><select class="form-select" id="templateBadge"><option value="">Aucun</option><option value="new">Nouveau</option><option value="popular">Populaire</option><option value="premium">Premium</option></select></div>
+                    </div>
+                    <div class="form-group"><label class="form-label">URL Image</label><input type="url" class="form-input" id="templateImageUrl" placeholder="https://..."></div>
+                    <div class="form-group"><label class="form-label">URL Fichier Excel</label><input type="url" class="form-input" id="templateFileUrl" placeholder="https://..."></div>
+                    <div class="form-group"><label class="form-label">URL Vidéo</label><input type="url" class="form-input" id="templateVideoUrl" placeholder="https://youtube.com/..."></div>
+                    <div class="form-group"><label class="form-label">Mots-clés (virgules)</label><input type="text" class="form-input" id="templateKeywords" placeholder="budget, finance"></div>
+                    <div style="display:flex;gap:1rem">
+                        <label class="form-checkbox"><input type="checkbox" id="templateIsFree"> Gratuit</label>
+                        <label class="form-checkbox"><input type="checkbox" id="templateIsFeatured"> Mis en avant</label>
+                        <label class="form-checkbox"><input type="checkbox" id="templateIsActive" checked> Actif</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="App.closeModal('templateModal')">Annuler</button>
+                <button class="btn btn-primary" onclick="document.getElementById('templateForm').requestSubmit()">Enregistrer</button>
+            </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-card-icon orange">💰</div>
-            <div class="stat-card-value">0</div>
-            <div class="stat-card-label">Ventes</div>
+    </div>
+    
+    <!-- Category Modal -->
+    <div class="modal-overlay" id="categoryModal">
+        <div class="modal" style="max-width:500px">
+            <div class="modal-header">
+                <h2 class="modal-title" id="categoryModalTitle">Nouvelle Catégorie</h2>
+                <button class="modal-close" onclick="App.closeModal('categoryModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="categoryForm" onsubmit="App.saveCategory(event)">
+                    <input type="hidden" id="categoryId">
+                    <div class="form-group"><label class="form-label">Nom *</label><input type="text" class="form-input" id="categoryName" required></div>
+                    <div class="form-group"><label class="form-label">Icône (emoji)</label><input type="text" class="form-input" id="categoryIcon" placeholder="📊" maxlength="5"></div>
+                    <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="categoryDescription" rows="3"></textarea></div>
+                    <div class="form-group"><label class="form-label">Ordre</label><input type="number" class="form-input" id="categoryOrder" value="0" min="0"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="App.closeModal('categoryModal')">Annuler</button>
+                <button class="btn btn-primary" onclick="document.getElementById('categoryForm').requestSubmit()">Enregistrer</button>
+            </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-card-icon cyan">👥</div>
-            <div class="stat-card-value">0</div>
-            <div class="stat-card-label">Utilisateurs</div>
+    </div>
+    
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal" style="max-width:400px">
+            <div class="modal-header"><h2 class="modal-title">Confirmation</h2><button class="modal-close" onclick="App.closeModal('confirmModal')">×</button></div>
+            <div class="modal-body"><p id="confirmMessage">Êtes-vous sûr ?</p></div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="App.closeModal('confirmModal')">Annuler</button>
+                <button class="btn btn-danger" id="confirmBtn">Confirmer</button>
+            </div>
         </div>
-    `;
-    
-    switchAdminTab('templates');
-}
+    </div>
 
-function switchAdminTab(tab) {
-    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-    event.target.classList.add('active');
-    
-    const content = document.getElementById('adminContent');
-    
-    switch(tab) {
-        case 'templates':
-            content.innerHTML = `
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Titre</th>
-                                <th>Catégorie</th>
-                                <th>Prix</th>
-                                <th>Téléchargements</th>
-                                <th>Statut</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${templates.map(t => `
-                                <tr>
-                                    <td><strong>${t.title}</strong></td>
-                                    <td>${t.category_name || '-'}</td>
-                                    <td>${t.is_free ? '<span class="table-badge success">Gratuit</span>' : formatPrice(t.price)}</td>
-                                    <td>${t.downloads_count || 0}</td>
-                                    <td><span class="table-badge ${t.is_active ? 'success' : 'danger'}">${t.is_active ? 'Actif' : 'Inactif'}</span></td>
-                                    <td>
-                                        <div class="table-actions">
-                                            <button class="btn btn-sm btn-ghost" onclick="editTemplate('${t.id}')">✏️</button>
-                                            <button class="btn btn-sm btn-ghost" onclick="confirmDelete('template', '${t.id}')">🗑️</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-            break;
-            
-        case 'categories':
-            content.innerHTML = `
-                <div style="margin-bottom: 1rem;">
-                    <button class="btn btn-primary" onclick="openCategoryModal()">+ Nouvelle Catégorie</button>
-                </div>
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Icône</th>
-                                <th>Nom</th>
-                                <th>Slug</th>
-                                <th>Ordre</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${categories.map(c => `
-                                <tr>
-                                    <td style="font-size: 1.5rem;">${c.icon}</td>
-                                    <td><strong>${c.name}</strong></td>
-                                    <td><code>${c.slug}</code></td>
-                                    <td>${c.display_order || 0}</td>
-                                    <td>
-                                        <div class="table-actions">
-                                            <button class="btn btn-sm btn-ghost" onclick="editCategory('${c.id}')">✏️</button>
-                                            <button class="btn btn-sm btn-ghost" onclick="confirmDelete('category', '${c.id}')">🗑️</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-            break;
-            
-        case 'purchases':
-            content.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-state-icon">💰</div>
-                    <h3 class="empty-state-title">Aucun achat</h3>
-                    <p class="empty-state-text">Les achats apparaîtront ici</p>
-                </div>
-            `;
-            break;
-            
-        case 'users':
-            content.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-state-icon">👥</div>
-                    <h3 class="empty-state-title">Utilisateurs</h3>
-                    <p class="empty-state-text">Connectez Supabase pour voir les utilisateurs</p>
-                </div>
-            `;
-            break;
-    }
-}
+<script>
+// =============================================
+// CONFIGURATION - REMPLACEZ PAR VOS CLÉS
+// =============================================
+const SUPABASE_URL = 'VOTRE_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'VOTRE_SUPABASE_ANON_KEY';
 
 // =============================================
-// MODALS
+// APPLICATION
 // =============================================
-function openTemplateModal(template = null) {
-    document.getElementById('templateModalTitle').textContent = template ? 'Modifier le Modèle' : 'Nouveau Modèle';
-    document.getElementById('templateId').value = template?.id || '';
-    document.getElementById('templateTitle').value = template?.title || '';
-    document.getElementById('templateShortDesc').value = template?.short_description || '';
-    document.getElementById('templateDescription').value = template?.description || '';
-    document.getElementById('templatePrice').value = template?.price || 0;
-    document.getElementById('templateBadge').value = template?.badge || '';
-    document.getElementById('templateImageUrl').value = template?.preview_image_url || '';
-    document.getElementById('templateFileUrl').value = template?.file_url || '';
-    document.getElementById('templateVideoUrl').value = template?.video_url || '';
-    document.getElementById('templateKeywords').value = template?.keywords?.join(', ') || '';
-    document.getElementById('templateIsFree').checked = template?.is_free || false;
-    document.getElementById('templateIsFeatured').checked = template?.is_featured || false;
-    document.getElementById('templateIsActive').checked = template?.is_active !== false;
-    
-    // Remplir les catégories
-    const categorySelect = document.getElementById('templateCategory');
-    categorySelect.innerHTML = categories.map(c => `
-        <option value="${c.id}" ${template?.category_id === c.id ? 'selected' : ''}>${c.icon} ${c.name}</option>
-    `).join('');
-    
-    document.getElementById('templateModal').classList.add('active');
-}
+const App = {
+    supabase: null,
+    user: null,
+    profile: null,
+    categories: [],
+    templates: [],
+    currentTab: 'templates',
 
-function closeTemplateModal() {
-    document.getElementById('templateModal').classList.remove('active');
-}
-
-function openCategoryModal(category = null) {
-    document.getElementById('categoryModalTitle').textContent = category ? 'Modifier la Catégorie' : 'Nouvelle Catégorie';
-    document.getElementById('categoryId').value = category?.id || '';
-    document.getElementById('categoryName').value = category?.name || '';
-    document.getElementById('categoryIcon').value = category?.icon || '📁';
-    document.getElementById('categoryDescription').value = category?.description || '';
-    document.getElementById('categoryOrder').value = category?.display_order || 0;
-    
-    document.getElementById('categoryModal').classList.add('active');
-}
-
-function closeCategoryModal() {
-    document.getElementById('categoryModal').classList.remove('active');
-}
-
-function confirmDelete(type, id) {
-    document.getElementById('confirmMessage').textContent = `Êtes-vous sûr de vouloir supprimer ${type === 'template' ? 'ce modèle' : 'cette catégorie'} ?`;
-    document.getElementById('confirmBtn').onclick = () => {
-        if (type === 'template') deleteTemplate(id);
-        else deleteCategory(id);
-        closeConfirmModal();
-    };
-    document.getElementById('confirmModal').classList.add('active');
-}
-
-function closeConfirmModal() {
-    document.getElementById('confirmModal').classList.remove('active');
-}
-
-// =============================================
-// CRUD OPERATIONS
-// =============================================
-async function handleTemplateSubmit(e) {
-    e.preventDefault();
-    
-    const id = document.getElementById('templateId').value;
-    const data = {
-        title: document.getElementById('templateTitle').value,
-        slug: slugify(document.getElementById('templateTitle').value),
-        category_id: document.getElementById('templateCategory').value,
-        short_description: document.getElementById('templateShortDesc').value,
-        description: document.getElementById('templateDescription').value,
-        price: parseFloat(document.getElementById('templatePrice').value) || 0,
-        badge: document.getElementById('templateBadge').value || null,
-        preview_image_url: document.getElementById('templateImageUrl').value || null,
-        file_url: document.getElementById('templateFileUrl').value || null,
-        video_url: document.getElementById('templateVideoUrl').value || null,
-        keywords: document.getElementById('templateKeywords').value.split(',').map(k => k.trim()).filter(k => k),
-        is_free: document.getElementById('templateIsFree').checked,
-        is_featured: document.getElementById('templateIsFeatured').checked,
-        is_active: document.getElementById('templateIsActive').checked
-    };
-    
-    if (supabase) {
-        if (id) {
-            await supabase.from('templates').update(data).eq('id', id);
-        } else {
-            await supabase.from('templates').insert(data);
-        }
-        await loadTemplates();
-    } else {
-        // Mode démo
-        if (id) {
-            const index = templates.findIndex(t => t.id === id);
-            if (index !== -1) templates[index] = { ...templates[index], ...data };
-        } else {
-            data.id = Date.now().toString();
-            data.category_name = categories.find(c => c.id === data.category_id)?.name;
-            templates.unshift(data);
-        }
-    }
-    
-    closeTemplateModal();
-    renderAdminPage();
-    showToast('Modèle enregistré avec succès', 'success');
-}
-
-async function handleCategorySubmit(e) {
-    e.preventDefault();
-    
-    const id = document.getElementById('categoryId').value;
-    const data = {
-        name: document.getElementById('categoryName').value,
-        slug: slugify(document.getElementById('categoryName').value),
-        icon: document.getElementById('categoryIcon').value || '📁',
-        description: document.getElementById('categoryDescription').value,
-        display_order: parseInt(document.getElementById('categoryOrder').value) || 0
-    };
-    
-    if (supabase) {
-        if (id) {
-            await supabase.from('categories').update(data).eq('id', id);
-        } else {
-            await supabase.from('categories').insert(data);
-        }
-        await loadCategories();
-    } else {
-        if (id) {
-            const index = categories.findIndex(c => c.id === id);
-            if (index !== -1) categories[index] = { ...categories[index], ...data };
-        } else {
-            data.id = Date.now().toString();
-            categories.push(data);
-        }
-    }
-    
-    closeCategoryModal();
-    renderCategories();
-    renderAdminPage();
-    showToast('Catégorie enregistrée avec succès', 'success');
-}
-
-function editTemplate(id) {
-    const template = templates.find(t => t.id === id);
-    if (template) openTemplateModal(template);
-}
-
-function editCategory(id) {
-    const category = categories.find(c => c.id === id);
-    if (category) openCategoryModal(category);
-}
-
-async function deleteTemplate(id) {
-    if (supabase) {
-        await supabase.from('templates').delete().eq('id', id);
-        await loadTemplates();
-    } else {
-        templates = templates.filter(t => t.id !== id);
-    }
-    renderAdminPage();
-    showToast('Modèle supprimé', 'success');
-}
-
-async function deleteCategory(id) {
-    if (supabase) {
-        await supabase.from('categories').delete().eq('id', id);
-        await loadCategories();
-    } else {
-        categories = categories.filter(c => c.id !== id);
-    }
-    renderCategories();
-    renderAdminPage();
-    showToast('Catégorie supprimée', 'success');
-}
-
-// =============================================
-// AUTH
-// =============================================
-async function handleLogin(e) {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    
-    if (supabase) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) {
-            showToast(error.message, 'error');
-            return;
-        }
-    } else {
-        // Mode démo
-        currentUser = { id: '1', email };
-        currentProfile = { id: '1', email, full_name: 'Admin Demo', role: 'admin' };
-    }
-    
-    showToast('Connexion réussie !', 'success');
-    updateNavbar();
-    navigate('home');
-}
-
-async function handleRegister(e) {
-    e.preventDefault();
-    const name = document.getElementById('registerName').value;
-    const email = document.getElementById('registerEmail').value;
-    const password = document.getElementById('registerPassword').value;
-    
-    if (supabase) {
-        const { error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: { data: { full_name: name } }
-        });
-        if (error) {
-            showToast(error.message, 'error');
-            return;
-        }
-        showToast('Compte créé ! Vérifiez votre email.', 'success');
-    } else {
-        currentUser = { id: '1', email };
-        currentProfile = { id: '1', email, full_name: name, role: 'user' };
-        showToast('Compte créé !', 'success');
-    }
-    
-    updateNavbar();
-    navigate('home');
-}
-
-async function handleLogout() {
-    if (supabase) {
-        await supabase.auth.signOut();
-    }
-    currentUser = null;
-    currentProfile = null;
-    updateNavbar();
-    navigate('home');
-    showToast('Déconnexion réussie', 'success');
-}
-
-// =============================================
-// PURCHASES
-// =============================================
-async function purchaseTemplate(templateId) {
-    if (!currentUser) {
-        showToast('Connectez-vous pour acheter', 'warning');
-        navigate('login');
-        return;
-    }
-    
-    const template = templates.find(t => t.id === templateId);
-    if (!template) return;
-    
-    // Ici, intégrer le paiement (Orange Money, Wave, etc.)
-    showToast('Redirection vers le paiement...', 'success');
-    
-    // Simulation d'achat
-    if (supabase) {
-        await supabase.from('purchases').insert({
-            user_id: currentUser.id,
-            template_id: templateId,
-            amount: template.price,
-            payment_status: 'completed',
-            payment_method: 'demo'
-        });
-    }
-    
-    showToast('Achat réussi ! Vous pouvez télécharger le modèle.', 'success');
-}
-
-async function downloadTemplate(templateId) {
-    const template = templates.find(t => t.id === templateId);
-    if (!template) return;
-    
-    if (template.file_url) {
-        window.open(template.file_url, '_blank');
-        
-        // Enregistrer le téléchargement
-        if (supabase && currentUser) {
-            await supabase.from('downloads').insert({
-                user_id: currentUser.id,
-                template_id: templateId
+    // INITIALISATION
+    async init() {
+        // Supabase
+        if (SUPABASE_URL !== 'VOTRE_SUPABASE_URL') {
+            this.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const { data: { session } } = await this.supabase.auth.getSession();
+            if (session) {
+                this.user = session.user;
+                await this.loadProfile();
+            }
+            this.supabase.auth.onAuthStateChange(async (event, session) => {
+                if (event === 'SIGNED_IN' && session) {
+                    this.user = session.user;
+                    await this.loadProfile();
+                } else if (event === 'SIGNED_OUT') {
+                    this.user = null;
+                    this.profile = null;
+                }
+                this.updateNav();
             });
+            await this.loadCategories();
+            await this.loadTemplates();
+        } else {
+            this.loadDemoData();
         }
         
-        showToast('Téléchargement démarré !', 'success');
-    } else {
-        showToast('Fichier non disponible', 'error');
+        this.updateNav();
+        this.renderCategories();
+        this.renderFeaturedTemplates();
+        this.renderSearchTags();
+        this.handleRoute();
+        this.setupEventListeners();
+    },
+
+    setupEventListeners() {
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+        });
+        window.addEventListener('popstate', () => this.handleRoute());
+        document.getElementById('adminTabs')?.addEventListener('click', (e) => {
+            if (e.target.classList.contains('admin-tab')) {
+                document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                e.target.classList.add('active');
+                this.currentTab = e.target.dataset.tab;
+                this.renderAdminContent();
+            }
+        });
+    },
+
+    // DEMO DATA
+    loadDemoData() {
+        this.categories = [
+            { id: '1', name: 'Tableaux de Bord', slug: 'tableaux-de-bord', icon: '📊', color: 'green' },
+            { id: '2', name: 'Finance & Budget', slug: 'finance-budget', icon: '💰', color: 'purple' },
+            { id: '3', name: 'Planning', slug: 'planning', icon: '📅', color: 'cyan' },
+            { id: '4', name: 'RH & Paie', slug: 'rh-paie', icon: '👥', color: 'orange' },
+            { id: '5', name: 'Inventaire', slug: 'inventaire', icon: '📦', color: 'pink' },
+            { id: '6', name: 'Ventes & CRM', slug: 'ventes-crm', icon: '📈', color: 'blue' }
+        ];
+        this.templates = [
+            { id: '1', title: 'Dashboard KPI Commercial', slug: 'dashboard-kpi', category_id: '1', category_name: 'Tableaux de Bord', price: 0, is_free: true, badge: 'popular', downloads_count: 2450, rating_average: 4.9, short_description: 'Dashboard complet pour piloter votre activité commerciale.', is_active: true, is_featured: true },
+            { id: '2', title: 'Suivi Budget Annuel', slug: 'suivi-budget', category_id: '2', category_name: 'Finance & Budget', price: 4900, is_free: false, badge: 'new', downloads_count: 1890, rating_average: 4.8, short_description: 'Gérez votre budget annuel.', is_active: true, is_featured: true },
+            { id: '3', title: 'Bulletin de Paie OHADA', slug: 'bulletin-paie', category_id: '4', category_name: 'RH & Paie', price: 0, is_free: true, badge: null, downloads_count: 3120, rating_average: 4.9, short_description: 'Bulletin de paie conforme OHADA.', is_active: true, is_featured: false },
+            { id: '4', title: 'Planning Gantt Pro', slug: 'planning-gantt', category_id: '3', category_name: 'Planning', price: 7900, is_free: false, badge: 'premium', downloads_count: 4280, rating_average: 5.0, short_description: 'Diagramme de Gantt professionnel.', is_active: true, is_featured: true },
+            { id: '5', title: 'Gestion de Stock', slug: 'gestion-stock', category_id: '5', category_name: 'Inventaire', price: 0, is_free: true, badge: null, downloads_count: 1650, rating_average: 4.7, short_description: 'Gestion d\'inventaire avec alertes.', is_active: true, is_featured: false },
+            { id: '6', title: 'Suivi Factures', slug: 'suivi-factures', category_id: '2', category_name: 'Finance & Budget', price: 4900, is_free: false, badge: 'popular', downloads_count: 2890, rating_average: 4.8, short_description: 'Suivi complet de vos factures.', is_active: true, is_featured: true }
+        ];
+    },
+
+    // SUPABASE LOADERS
+    async loadProfile() {
+        if (!this.user) return;
+        const { data } = await this.supabase.from('profiles').select('*').eq('id', this.user.id).single();
+        this.profile = data;
+    },
+
+    async loadCategories() {
+        const { data } = await this.supabase.from('categories').select('*').eq('is_active', true).order('display_order');
+        if (data) this.categories = data;
+    },
+
+    async loadTemplates() {
+        const { data } = await this.supabase.from('templates').select('*, categories(name, slug, icon)').eq('is_active', true).order('created_at', { ascending: false });
+        if (data) this.templates = data.map(t => ({ ...t, category_name: t.categories?.name }));
+    },
+
+    // NAVIGATION
+    navigate(page, params = {}) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const pageEl = document.getElementById('page-' + page);
+        if (pageEl) pageEl.classList.add('active');
+        
+        const url = new URL(window.location);
+        url.searchParams.set('page', page);
+        Object.entries(params).forEach(([k, v]) => v ? url.searchParams.set(k, v) : url.searchParams.delete(k));
+        window.history.pushState({}, '', url);
+        
+        this.onPageChange(page, params);
+        window.scrollTo(0, 0);
+    },
+
+    handleRoute() {
+        const url = new URL(window.location);
+        const page = url.searchParams.get('page') || 'home';
+        const slug = url.searchParams.get('slug');
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const pageEl = document.getElementById('page-' + page);
+        if (pageEl) pageEl.classList.add('active');
+        this.onPageChange(page, { slug });
+    },
+
+    onPageChange(page, params) {
+        switch (page) {
+            case 'home':
+                this.renderFeaturedTemplates();
+                break;
+            case 'templates':
+                this.renderAllTemplates();
+                break;
+            case 'template-detail':
+                this.renderTemplateDetail(params.slug);
+                break;
+            case 'admin':
+                if (this.isAdmin()) this.renderAdmin();
+                else this.navigate('home');
+                break;
+            case 'my-purchases':
+                if (this.user) this.renderPurchases();
+                else this.navigate('login');
+                break;
+        }
+    },
+
+    // RENDERERS
+    updateNav() {
+        const nav = document.getElementById('navActions');
+        if (this.user) {
+            const initials = this.getInitials(this.profile?.full_name || this.user.email);
+            const isAdm = this.isAdmin();
+            nav.innerHTML = '<div class="nav-dropdown"><div class="nav-user"><div class="nav-user-avatar">' + initials + '</div><span class="nav-user-name">' + (this.profile?.full_name || 'Mon compte') + '</span></div><div class="nav-dropdown-menu"><div class="nav-dropdown-item" onclick="App.navigate(\'my-purchases\')">📦 Mes achats</div>' + (isAdm ? '<div class="nav-dropdown-item" onclick="App.navigate(\'admin\')">⚙️ Administration</div>' : '') + '<div class="nav-dropdown-divider"></div><div class="nav-dropdown-item" onclick="App.logout()">🚪 Déconnexion</div></div></div>';
+        } else {
+            nav.innerHTML = '<button class="btn btn-ghost" onclick="App.navigate(\'login\')">Connexion</button><button class="btn btn-primary" onclick="App.navigate(\'register\')">S\'inscrire</button>';
+        }
+    },
+
+    renderCategories() {
+        const grid = document.getElementById('categoriesGrid');
+        if (!grid) return;
+        grid.innerHTML = this.categories.map(c => '<div class="category-card" onclick="App.filterByCategory(\'' + c.id + '\')"><div class="category-icon">' + c.icon + '</div><div class="category-name">' + c.name + '</div><div class="category-count">' + this.templates.filter(t => t.category_id === c.id).length + '+ modèles</div></div>').join('');
+    },
+
+    renderSearchTags() {
+        const tags = document.getElementById('searchTags');
+        if (!tags) return;
+        const popular = ['Dashboard', 'Budget', 'Planning', 'Paie', 'Stock', 'Factures'];
+        tags.innerHTML = popular.map(t => '<span class="search-tag" onclick="App.searchTag(\'' + t + '\')">' + t + '</span>').join('');
+    },
+
+    renderFeaturedTemplates() {
+        const grid = document.getElementById('featuredTemplatesGrid');
+        if (!grid) return;
+        const featured = this.templates.filter(t => t.is_featured || t.badge).slice(0, 6);
+        grid.innerHTML = (featured.length ? featured : this.templates.slice(0, 6)).map(t => this.templateCard(t)).join('');
+    },
+
+    renderAllTemplates() {
+        const grid = document.getElementById('allTemplatesGrid');
+        const filters = document.getElementById('templatesFilters');
+        if (!grid) return;
+        grid.innerHTML = this.templates.map(t => this.templateCard(t)).join('');
+        if (filters) {
+            filters.innerHTML = '<button class="filter-btn active" onclick="App.filter(\'all\', this)">Tous</button>' + this.categories.map(c => '<button class="filter-btn" onclick="App.filter(\'' + c.id + '\', this)">' + c.icon + ' ' + c.name + '</button>').join('');
+        }
+    },
+
+    templateCard(t) {
+        const badge = t.badge === 'popular' ? '⭐ Populaire' : t.badge === 'new' ? '✨ Nouveau' : t.badge === 'premium' ? '👑 Premium' : t.is_free ? '🎁 Gratuit' : '';
+        const badgeClass = t.badge || (t.is_free ? 'free' : '');
+        return '<div class="template-card" onclick="App.navigate(\'template-detail\', { slug: \'' + t.slug + '\' })"><div class="template-preview">' + (badge ? '<span class="template-badge ' + badgeClass + '">' + badge + '</span>' : '') + (t.preview_image_url ? '<img src="' + t.preview_image_url + '" alt="' + t.title + '">' : '<div class="template-preview-placeholder"><span>📄</span><small>Aperçu</small></div>') + '</div><div class="template-info"><div class="template-category">' + (t.category_name || 'Non classé') + '</div><h3 class="template-title">' + t.title + '</h3><div class="template-meta"><div class="template-stats"><span>⬇️ ' + this.formatNum(t.downloads_count || 0) + '</span><span>⭐ ' + (t.rating_average || '0') + '</span></div><span class="template-price ' + (t.is_free ? 'free' : 'paid') + '">' + (t.is_free ? 'Gratuit' : this.formatPrice(t.price)) + '</span></div></div></div>';
+    },
+
+    renderTemplateDetail(slug) {
+        const container = document.getElementById('templateDetail');
+        const t = this.templates.find(x => x.slug === slug);
+        if (!t) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔍</div><h3 class="empty-state-title">Modèle non trouvé</h3></div>';
+            return;
+        }
+        const video = t.video_url ? this.getVideoEmbed(t.video_url) : '';
+        container.innerHTML = '<div class="template-detail-grid"><div class="template-detail-main"><div class="template-detail-image">' + (t.preview_image_url ? '<img src="' + t.preview_image_url + '" alt="' + t.title + '">' : '<div class="template-detail-image-placeholder"><span>📄</span><p>Aperçu</p></div>') + '</div>' + (video ? '<div class="template-detail-video">' + video + '</div>' : '') + '<div class="template-detail-content"><h1>' + t.title + '</h1><div class="template-detail-meta"><div class="template-detail-meta-item">📁 ' + (t.category_name || 'Non classé') + '</div><div class="template-detail-meta-item">⬇️ ' + this.formatNum(t.downloads_count || 0) + ' téléchargements</div><div class="template-detail-meta-item">⭐ ' + (t.rating_average || '0') + '/5</div></div><div class="template-detail-description">' + (t.description || t.short_description || '<p>Aucune description.</p>') + '</div>' + (t.keywords?.length ? '<div class="template-detail-keywords">' + t.keywords.map(k => '<span class="template-keyword">' + k + '</span>').join('') + '</div>' : '') + '</div></div><div class="template-detail-sidebar"><div class="sidebar-card"><div class="sidebar-price"><div class="sidebar-price-value ' + (t.is_free ? 'free' : 'paid') + '">' + (t.is_free ? 'Gratuit' : this.formatPrice(t.price)) + '</div>' + (!t.is_free ? '<div class="sidebar-price-label">Prix unique</div>' : '') + '</div><div class="sidebar-actions">' + (t.is_free ? '<button class="btn btn-primary btn-block btn-lg" onclick="App.download(\'' + t.id + '\')">⬇️ Télécharger</button>' : '<button class="btn btn-primary btn-block btn-lg" onclick="App.purchase(\'' + t.id + '\')">💳 Acheter</button>') + '<button class="btn btn-ghost btn-block" onclick="App.navigate(\'templates\')">← Retour</button></div><div class="sidebar-features"><div class="sidebar-features-title">Ce qui est inclus :</div><div class="sidebar-feature"><span class="sidebar-feature-icon">✓</span> Fichier Excel complet</div><div class="sidebar-feature"><span class="sidebar-feature-icon">✓</span> 100% éditable</div><div class="sidebar-feature"><span class="sidebar-feature-icon">✓</span> Formules pré-configurées</div><div class="sidebar-feature"><span class="sidebar-feature-icon">✓</span> Compatible Excel & Google Sheets</div></div></div></div></div>';
+    },
+
+    // ADMIN
+    isAdmin() {
+        return this.profile?.role === 'admin' || this.profile?.role === 'super_admin';
+    },
+
+    renderAdmin() {
+        document.getElementById('adminStats').innerHTML = '<div class="stat-card"><div class="stat-card-icon green">📄</div><div class="stat-card-value">' + this.templates.length + '</div><div class="stat-card-label">Modèles</div></div><div class="stat-card"><div class="stat-card-icon purple">📁</div><div class="stat-card-value">' + this.categories.length + '</div><div class="stat-card-label">Catégories</div></div><div class="stat-card"><div class="stat-card-icon orange">💰</div><div class="stat-card-value">0</div><div class="stat-card-label">Ventes</div></div><div class="stat-card"><div class="stat-card-icon cyan">👥</div><div class="stat-card-value">0</div><div class="stat-card-label">Utilisateurs</div></div>';
+        this.renderAdminContent();
+    },
+
+    renderAdminContent() {
+        const content = document.getElementById('adminContent');
+        if (this.currentTab === 'templates') {
+            content.innerHTML = '<div class="table-container"><table class="table"><thead><tr><th>Titre</th><th>Catégorie</th><th>Prix</th><th>Téléchargements</th><th>Statut</th><th>Actions</th></tr></thead><tbody>' + this.templates.map(t => '<tr><td><strong>' + t.title + '</strong></td><td>' + (t.category_name || '-') + '</td><td>' + (t.is_free ? '<span class="table-badge success">Gratuit</span>' : this.formatPrice(t.price)) + '</td><td>' + (t.downloads_count || 0) + '</td><td><span class="table-badge ' + (t.is_active !== false ? 'success' : 'danger') + '">' + (t.is_active !== false ? 'Actif' : 'Inactif') + '</span></td><td><div class="table-actions"><button class="btn btn-sm btn-ghost" onclick="App.editTemplate(\'' + t.id + '\')">✏️</button><button class="btn btn-sm btn-ghost" onclick="App.confirmDelete(\'template\', \'' + t.id + '\')">🗑️</button></div></td></tr>').join('') + '</tbody></table></div>';
+        } else if (this.currentTab === 'categories') {
+            content.innerHTML = '<div style="margin-bottom:1rem"><button class="btn btn-primary" onclick="App.openCategoryModal()">+ Nouvelle Catégorie</button></div><div class="table-container"><table class="table"><thead><tr><th>Icône</th><th>Nom</th><th>Slug</th><th>Ordre</th><th>Actions</th></tr></thead><tbody>' + this.categories.map(c => '<tr><td style="font-size:1.5rem">' + c.icon + '</td><td><strong>' + c.name + '</strong></td><td><code>' + c.slug + '</code></td><td>' + (c.display_order || 0) + '</td><td><div class="table-actions"><button class="btn btn-sm btn-ghost" onclick="App.editCategory(\'' + c.id + '\')">✏️</button><button class="btn btn-sm btn-ghost" onclick="App.confirmDelete(\'category\', \'' + c.id + '\')">🗑️</button></div></td></tr>').join('') + '</tbody></table></div>';
+        } else {
+            content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💰</div><h3 class="empty-state-title">Achats</h3><p class="empty-state-text">Les achats apparaîtront ici</p></div>';
+        }
+    },
+
+    // MODALS
+    openTemplateModal(t = null) {
+        document.getElementById('templateModalTitle').textContent = t ? 'Modifier le Modèle' : 'Nouveau Modèle';
+        document.getElementById('templateId').value = t?.id || '';
+        document.getElementById('templateTitle').value = t?.title || '';
+        document.getElementById('templateShortDesc').value = t?.short_description || '';
+        document.getElementById('templateDescription').value = t?.description || '';
+        document.getElementById('templatePrice').value = t?.price || 0;
+        document.getElementById('templateBadge').value = t?.badge || '';
+        document.getElementById('templateImageUrl').value = t?.preview_image_url || '';
+        document.getElementById('templateFileUrl').value = t?.file_url || '';
+        document.getElementById('templateVideoUrl').value = t?.video_url || '';
+        document.getElementById('templateKeywords').value = t?.keywords?.join(', ') || '';
+        document.getElementById('templateIsFree').checked = t?.is_free || false;
+        document.getElementById('templateIsFeatured').checked = t?.is_featured || false;
+        document.getElementById('templateIsActive').checked = t?.is_active !== false;
+        document.getElementById('templateCategoryId').innerHTML = this.categories.map(c => '<option value="' + c.id + '"' + (t?.category_id === c.id ? ' selected' : '') + '>' + c.icon + ' ' + c.name + '</option>').join('');
+        document.getElementById('templateModal').classList.add('active');
+    },
+
+    openCategoryModal(c = null) {
+        document.getElementById('categoryModalTitle').textContent = c ? 'Modifier la Catégorie' : 'Nouvelle Catégorie';
+        document.getElementById('categoryId').value = c?.id || '';
+        document.getElementById('categoryName').value = c?.name || '';
+        document.getElementById('categoryIcon').value = c?.icon || '📁';
+        document.getElementById('categoryDescription').value = c?.description || '';
+        document.getElementById('categoryOrder').value = c?.display_order || 0;
+        document.getElementById('categoryModal').classList.add('active');
+    },
+
+    closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+    },
+
+    confirmDelete(type, id) {
+        document.getElementById('confirmMessage').textContent = 'Êtes-vous sûr de vouloir supprimer ' + (type === 'template' ? 'ce modèle' : 'cette catégorie') + ' ?';
+        document.getElementById('confirmBtn').onclick = () => {
+            if (type === 'template') this.deleteTemplate(id);
+            else this.deleteCategory(id);
+            this.closeModal('confirmModal');
+        };
+        document.getElementById('confirmModal').classList.add('active');
+    },
+
+    // CRUD
+    async saveTemplate(e) {
+        e.preventDefault();
+        const id = document.getElementById('templateId').value;
+        const data = {
+            title: document.getElementById('templateTitle').value,
+            slug: this.slugify(document.getElementById('templateTitle').value),
+            category_id: document.getElementById('templateCategoryId').value,
+            short_description: document.getElementById('templateShortDesc').value,
+            description: document.getElementById('templateDescription').value,
+            price: parseFloat(document.getElementById('templatePrice').value) || 0,
+            badge: document.getElementById('templateBadge').value || null,
+            preview_image_url: document.getElementById('templateImageUrl').value || null,
+            file_url: document.getElementById('templateFileUrl').value || null,
+            video_url: document.getElementById('templateVideoUrl').value || null,
+            keywords: document.getElementById('templateKeywords').value.split(',').map(k => k.trim()).filter(k => k),
+            is_free: document.getElementById('templateIsFree').checked,
+            is_featured: document.getElementById('templateIsFeatured').checked,
+            is_active: document.getElementById('templateIsActive').checked
+        };
+        if (this.supabase) {
+            if (id) await this.supabase.from('templates').update(data).eq('id', id);
+            else await this.supabase.from('templates').insert(data);
+            await this.loadTemplates();
+        } else {
+            if (id) {
+                const idx = this.templates.findIndex(t => t.id === id);
+                if (idx !== -1) this.templates[idx] = { ...this.templates[idx], ...data };
+            } else {
+                data.id = Date.now().toString();
+                data.category_name = this.categories.find(c => c.id === data.category_id)?.name;
+                data.downloads_count = 0;
+                data.rating_average = 0;
+                this.templates.unshift(data);
+            }
+        }
+        this.closeModal('templateModal');
+        this.renderAdmin();
+        this.toast('Modèle enregistré', 'success');
+    },
+
+    async saveCategory(e) {
+        e.preventDefault();
+        const id = document.getElementById('categoryId').value;
+        const data = {
+            name: document.getElementById('categoryName').value,
+            slug: this.slugify(document.getElementById('categoryName').value),
+            icon: document.getElementById('categoryIcon').value || '📁',
+            description: document.getElementById('categoryDescription').value,
+            display_order: parseInt(document.getElementById('categoryOrder').value) || 0
+        };
+        if (this.supabase) {
+            if (id) await this.supabase.from('categories').update(data).eq('id', id);
+            else await this.supabase.from('categories').insert(data);
+            await this.loadCategories();
+        } else {
+            if (id) {
+                const idx = this.categories.findIndex(c => c.id === id);
+                if (idx !== -1) this.categories[idx] = { ...this.categories[idx], ...data };
+            } else {
+                data.id = Date.now().toString();
+                this.categories.push(data);
+            }
+        }
+        this.closeModal('categoryModal');
+        this.renderCategories();
+        this.renderAdmin();
+        this.toast('Catégorie enregistrée', 'success');
+    },
+
+    editTemplate(id) {
+        const t = this.templates.find(x => x.id === id);
+        if (t) this.openTemplateModal(t);
+    },
+
+    editCategory(id) {
+        const c = this.categories.find(x => x.id === id);
+        if (c) this.openCategoryModal(c);
+    },
+
+    async deleteTemplate(id) {
+        if (this.supabase) {
+            await this.supabase.from('templates').delete().eq('id', id);
+            await this.loadTemplates();
+        } else {
+            this.templates = this.templates.filter(t => t.id !== id);
+        }
+        this.renderAdmin();
+        this.toast('Modèle supprimé', 'success');
+    },
+
+    async deleteCategory(id) {
+        if (this.supabase) {
+            await this.supabase.from('categories').delete().eq('id', id);
+            await this.loadCategories();
+        } else {
+            this.categories = this.categories.filter(c => c.id !== id);
+        }
+        this.renderCategories();
+        this.renderAdmin();
+        this.toast('Catégorie supprimée', 'success');
+    },
+
+    // AUTH
+    async login(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        if (this.supabase) {
+            const { error } = await this.supabase.auth.signInWithPassword({ email, password });
+            if (error) { this.toast(error.message, 'error'); return; }
+        } else {
+            this.user = { id: '1', email };
+            this.profile = { id: '1', email, full_name: 'Admin Demo', role: 'admin' };
+        }
+        this.toast('Connexion réussie !', 'success');
+        this.updateNav();
+        this.navigate('home');
+    },
+
+    async register(e) {
+        e.preventDefault();
+        const name = document.getElementById('registerName').value;
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+        if (this.supabase) {
+            const { error } = await this.supabase.auth.signUp({ email, password, options: { data: { full_name: name } } });
+            if (error) { this.toast(error.message, 'error'); return; }
+            this.toast('Compte créé ! Vérifiez votre email.', 'success');
+        } else {
+            this.user = { id: '1', email };
+            this.profile = { id: '1', email, full_name: name, role: 'user' };
+            this.toast('Compte créé !', 'success');
+        }
+        this.updateNav();
+        this.navigate('home');
+    },
+
+    async logout() {
+        if (this.supabase) await this.supabase.auth.signOut();
+        this.user = null;
+        this.profile = null;
+        this.updateNav();
+        this.navigate('home');
+        this.toast('Déconnexion réussie', 'success');
+    },
+
+    // SEARCH & FILTER
+    search() {
+        const q = document.getElementById('searchInput').value.trim().toLowerCase();
+        if (q) {
+            this.navigate('templates');
+            const filtered = this.templates.filter(t => t.title.toLowerCase().includes(q) || t.category_name?.toLowerCase().includes(q));
+            document.getElementById('allTemplatesGrid').innerHTML = filtered.length ? filtered.map(t => this.templateCard(t)).join('') : '<div class="empty-state"><div class="empty-state-icon">🔍</div><h3 class="empty-state-title">Aucun résultat</h3></div>';
+        }
+    },
+
+    searchTag(tag) {
+        document.getElementById('searchInput').value = tag;
+        this.search();
+    },
+
+    filterByCategory(id) {
+        this.navigate('templates');
+        const filtered = this.templates.filter(t => t.category_id === id);
+        document.getElementById('allTemplatesGrid').innerHTML = filtered.map(t => this.templateCard(t)).join('');
+    },
+
+    filter(id, btn) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filtered = id === 'all' ? this.templates : this.templates.filter(t => t.category_id === id);
+        document.getElementById('allTemplatesGrid').innerHTML = filtered.map(t => this.templateCard(t)).join('');
+    },
+
+    // PURCHASES
+    purchase(id) {
+        if (!this.user) { this.toast('Connectez-vous pour acheter', 'warning'); this.navigate('login'); return; }
+        this.toast('Redirection vers le paiement...', 'success');
+    },
+
+    download(id) {
+        const t = this.templates.find(x => x.id === id);
+        if (t?.file_url) { window.open(t.file_url, '_blank'); this.toast('Téléchargement démarré', 'success'); }
+        else this.toast('Fichier non disponible', 'error');
+    },
+
+    renderPurchases() {
+        document.getElementById('myPurchasesList').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📦</div><h3 class="empty-state-title">Aucun achat</h3><p class="empty-state-text">Vos modèles apparaîtront ici</p><button class="btn btn-primary" onclick="App.navigate(\'templates\')">Explorer</button></div>';
+    },
+
+    // UTILS
+    slugify(s) {
+        return s.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    },
+
+    formatPrice(p) {
+        return new Intl.NumberFormat('fr-FR').format(p) + ' FCFA';
+    },
+
+    formatNum(n) {
+        return n >= 1000 ? (n / 1000).toFixed(1) + 'K' : n.toString();
+    },
+
+    getInitials(name) {
+        return name ? name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : '?';
+    },
+
+    getVideoEmbed(url) {
+        const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+        if (yt) return '<iframe src="https://www.youtube.com/embed/' + yt[1] + '" allowfullscreen></iframe>';
+        const vim = url.match(/vimeo\.com\/(\d+)/);
+        if (vim) return '<iframe src="https://player.vimeo.com/video/' + vim[1] + '" allowfullscreen></iframe>';
+        return '';
+    },
+
+    toast(msg, type = 'success') {
+        const c = document.getElementById('toastContainer');
+        const t = document.createElement('div');
+        t.className = 'toast ' + type;
+        t.innerHTML = '<span class="toast-icon">' + (type === 'success' ? '✓' : type === 'error' ? '✗' : '⚠') + '</span><span class="toast-message">' + msg + '</span><button class="toast-close" onclick="this.parentElement.remove()">×</button>';
+        c.appendChild(t);
+        setTimeout(() => t.classList.add('show'), 10);
+        setTimeout(() => t.remove(), 5000);
+    },
+
+    toggleMobileMenu() {
+        const links = document.getElementById('navLinks');
+        links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
     }
-}
+};
 
-function renderMyPurchases() {
-    const container = document.getElementById('myPurchasesList');
-    container.innerHTML = `
-        <div class="empty-state">
-            <div class="empty-state-icon">📦</div>
-            <h3 class="empty-state-title">Aucun achat</h3>
-            <p class="empty-state-text">Vos modèles achetés apparaîtront ici</p>
-            <button class="btn btn-primary" onclick="navigate('templates')">Explorer les modèles</button>
-        </div>
-    `;
-}
-
-// =============================================
-// SEARCH & FILTER
-// =============================================
-function handleSearch(e) {
-    if (e.key === 'Enter') performSearch();
-}
-
-function performSearch() {
-    const query = document.getElementById('searchInput').value.trim();
-    if (query) {
-        navigate('templates');
-        const filtered = templates.filter(t => 
-            t.title.toLowerCase().includes(query.toLowerCase()) ||
-            t.category_name?.toLowerCase().includes(query.toLowerCase())
-        );
-        document.getElementById('allTemplatesGrid').innerHTML = filtered.length ?
-            filtered.map(renderTemplateCard).join('') :
-            '<div class="empty-state"><div class="empty-state-icon">🔍</div><h3 class="empty-state-title">Aucun résultat</h3></div>';
-    }
-}
-
-function searchByTag(tag) {
-    document.getElementById('searchInput').value = tag;
-    performSearch();
-}
-
-function filterByCategory(categoryId) {
-    navigate('templates');
-    const filtered = templates.filter(t => t.category_id === categoryId);
-    document.getElementById('allTemplatesGrid').innerHTML = filtered.map(renderTemplateCard).join('');
-}
-
-function filterTemplates(filter, btn) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    
-    const filtered = filter === 'all' ? templates : templates.filter(t => t.category_id === filter);
-    document.getElementById('allTemplatesGrid').innerHTML = filtered.map(renderTemplateCard).join('');
-}
-
-// =============================================
-// UTILITIES
-// =============================================
-function slugify(text) {
-    return text.toString().toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
-}
-
-function formatPrice(price) {
-    return new Intl.NumberFormat('fr-FR').format(price) + ' FCFA';
-}
-
-function formatNumber(num) {
-    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-    return num.toString();
-}
-
-function getInitials(name) {
-    if (!name) return '?';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-}
-
-function getVideoEmbed(url) {
-    if (!url) return '';
-    
-    // YouTube
-    const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/);
-    if (ytMatch) {
-        return `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe>`;
-    }
-    
-    // Vimeo
-    const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
-    if (vimeoMatch) {
-        return `<iframe src="https://player.vimeo.com/video/${vimeoMatch[1]}" allowfullscreen></iframe>`;
-    }
-    
-    return '';
-}
-
-function showToast(message, type = 'success') {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `
-        <span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✗' : '⚠'}</span>
-        <span class="toast-message">${message}</span>
-        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
-    `;
-    container.appendChild(toast);
-    
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => toast.remove(), 5000);
-}
-
-function toggleMobileMenu() {
-    const links = document.getElementById('navLinks');
-    links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
-}
-
-// =============================================
 // INIT
-// =============================================
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => App.init());
 </script>
 </body>
 </html>
