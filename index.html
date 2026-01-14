@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root{--primary:#217346;--primary-dark:#1a5c38;--primary-light:#e8f5ee;--secondary:#0ea5e9;--orange:#f59e0b;--purple:#7c3aed;--gray-900:#111827;--gray-800:#1f2937;--gray-700:#374151;--gray-600:#4b5563;--gray-500:#6b7280;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-200:#e5e7eb;--gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;--danger:#dc2626;--success:#16a34a;--warning:#f59e0b;--shadow:0 1px 3px rgba(0,0,0,0.1);--shadow-md:0 4px 6px -1px rgba(0,0,0,0.1);--shadow-lg:0 10px 15px -3px rgba(0,0,0,0.1);--shadow-xl:0 20px 25px -5px rgba(0,0,0,0.1);--radius:8px;--radius-lg:12px}
+        :root{--primary:#0066cc;--primary-dark:#0052a3;--primary-light:#e6f0ff;--secondary:#00a67e;--orange:#f5a623;--purple:#7c3aed;--gray-900:#111827;--gray-800:#1f2937;--gray-700:#374151;--gray-600:#4b5563;--gray-500:#6b7280;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-200:#e5e7eb;--gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;--danger:#dc2626;--success:#16a34a;--warning:#f59e0b;--shadow:0 1px 3px rgba(0,0,0,0.1);--shadow-md:0 4px 6px -1px rgba(0,0,0,0.1);--shadow-lg:0 10px 15px -3px rgba(0,0,0,0.1);--radius:8px;--radius-lg:12px}
         *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:'Inter',sans-serif;background:var(--white);color:var(--gray-800);line-height:1.6}
         .container{max-width:1280px;margin:0 auto;padding:0 24px}
         .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:var(--radius);font-weight:600;font-size:14px;cursor:pointer;transition:all 0.2s;text-decoration:none;border:none;font-family:inherit}
@@ -48,51 +48,6 @@
         .icon-picker-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}
         .icon-picker-item{font-size:24px;padding:8px;text-align:center;cursor:pointer;border-radius:var(--radius)}
         .icon-picker-item:hover{background:var(--gray-100)}
-        
-        /* Testimonials */
-        .testimonials{background:var(--gray-50);padding:64px 0}
-        .testimonials-title{text-align:center;font-size:28px;font-weight:800;margin-bottom:40px}
-        .testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-        .testimonial-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:24px}
-        .testimonial-text{font-size:15px;color:var(--gray-600);line-height:1.7;margin-bottom:20px;font-style:italic}
-        .testimonial-author{display:flex;align-items:center;gap:12px}
-        .testimonial-avatar{width:44px;height:44px;background:var(--primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--primary)}
-        .testimonial-name{font-weight:600;font-size:14px}
-        .testimonial-role{font-size:13px;color:var(--gray-500)}
-        .testimonial-stars{color:var(--orange);margin-top:12px}
-        
-        /* Value Section */
-        .value-section{padding:80px 0}
-        .value-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
-        .value-content h2{font-size:32px;font-weight:800;margin-bottom:20px;line-height:1.3}
-        .value-content p{font-size:16px;color:var(--gray-600);line-height:1.8;margin-bottom:24px}
-        .value-mockup{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-lg)}
-        .mockup-header{background:var(--primary);padding:12px 16px;display:flex;gap:8px}
-        .mockup-dot{width:12px;height:12px;border-radius:50%}
-        .mockup-dot.red{background:#ef4444}.mockup-dot.yellow{background:#f59e0b}.mockup-dot.green{background:#22c55e}
-        .mockup-body{padding:16px}
-        .mockup-table{width:100%;border-collapse:collapse;font-size:13px}
-        .mockup-table th,.mockup-table td{padding:10px;border:1px solid var(--gray-200);text-align:left}
-        .mockup-table th{background:var(--gray-100);font-weight:600}
-        .mockup-table .highlight{background:var(--primary-light);color:var(--primary);font-weight:600}
-        
-        /* Features Bar */
-        .features-bar{background:var(--gray-900);padding:40px 0}
-        .features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center}
-        .feature-item{color:var(--white)}
-        .feature-icon{font-size:32px;margin-bottom:12px}
-        .feature-text{font-size:14px;font-weight:500}
-        
-        /* Support Section */
-        .support-section{padding:64px 0;background:linear-gradient(135deg,#f0fdf4 0%,#ecfeff 100%)}
-        .support-grid{display:grid;grid-template-columns:auto 1fr;gap:60px;align-items:center}
-        .support-avatar{width:180px;height:180px;background:var(--white);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:80px;box-shadow:var(--shadow-lg)}
-        .support-content h2{font-size:28px;font-weight:800;margin-bottom:20px}
-        .support-list{list-style:none;margin-bottom:24px}
-        .support-list li{padding:10px 0;font-size:15px;color:var(--gray-600);display:flex;align-items:center;gap:12px}
-        .support-list li::before{content:'✓';color:var(--primary);font-weight:700;font-size:18px}
-        
-        @media(max-width:768px){.testimonials-grid{grid-template-columns:1fr}.value-grid{grid-template-columns:1fr}.features-grid{grid-template-columns:repeat(2,1fr)}.support-grid{grid-template-columns:1fr;text-align:center}.support-avatar{margin:0 auto}}
         
         .navbar{background:var(--white);border-bottom:1px solid var(--gray-200);position:sticky;top:0;z-index:1000}
         .nav-container{display:flex;align-items:center;justify-content:space-between;height:72px}
@@ -142,11 +97,10 @@
         .category-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);transform:translateY(-2px)}
         .category-icon{font-size:36px;margin-bottom:12px}.category-name{font-weight:600;font-size:15px;margin-bottom:4px}.category-count{font-size:13px;color:var(--gray-500)}
         .templates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
-        .template-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;transition:all 0.3s}
-        .template-card:hover{box-shadow:var(--shadow-xl);transform:translateY(-4px)}
-        .template-preview{aspect-ratio:16/9;background:var(--gray-100);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-        .template-preview img{width:100%;height:100%;object-fit:cover;transition:transform 0.3s}
-        .template-card:hover .template-preview img{transform:scale(1.05)}
+        .template-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;transition:all 0.25s}
+        .template-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-4px)}
+        .template-preview{height:180px;background:var(--gray-100);position:relative;display:flex;align-items:center;justify-content:center}
+        .template-preview img{width:100%;height:100%;object-fit:cover}
         .template-preview-placeholder{color:var(--gray-400);font-size:48px}
         .template-badge{position:absolute;top:12px;left:12px;padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase}
         .template-badge.new{background:var(--secondary);color:var(--white)}
@@ -266,82 +220,23 @@
     <main id="app">
         <div class="page active" id="page-home">
             <section class="hero"><div class="container"><div class="hero-content">
-                <h1><span id="statTemplates">0</span>+ Modèles <span>Excel</span></h1>
-                <p class="hero-subtitle">Téléchargez des modèles Excel prêts à l'emploi et 100% éditables pour vos présentations et rapports professionnels.</p>
+                <div class="hero-badge"><span class="hero-badge-dot"></span> +5,000 modèles professionnels</div>
+                <h1>Modèles <span>Excel</span> Professionnels</h1>
+                <p class="hero-subtitle">Téléchargez des modèles Excel prêts à l'emploi. 100% éditables.</p>
                 <div class="hero-actions"><button class="btn btn-primary btn-lg" onclick="App.navigate('templates')">Explorer les Modèles</button><button class="btn btn-outline btn-lg" onclick="App.navigate('pricing')">Voir les Tarifs</button></div>
+                <div class="hero-stats"><div class="hero-stat"><div class="hero-stat-value" id="statTemplates">0</div><div class="hero-stat-label">Modèles</div></div><div class="hero-stat"><div class="hero-stat-value">50,000+</div><div class="hero-stat-label">Utilisateurs</div></div><div class="hero-stat"><div class="hero-stat-value">4.9/5</div><div class="hero-stat-label">Note moyenne</div></div></div>
             </div></div></section>
-            
-            <section class="section"><div class="container">
-                <div class="section-header-row"><h2 class="section-title">Modèles Populaires</h2><button class="btn btn-outline" onclick="App.navigate('templates')">Voir tout →</button></div>
-                <div class="templates-grid" id="featuredTemplatesGrid"></div>
+            <section class="search-section"><div class="container">
+                <div class="search-box"><input type="text" id="searchInput" placeholder="Rechercher un modèle..." onkeyup="if(event.key==='Enter')App.search()"><button class="search-btn" onclick="App.search()">Rechercher</button></div>
+                <div class="search-tags" id="searchTags"></div>
             </div></section>
-            
-            <section class="value-section"><div class="container"><div class="value-grid">
-                <div class="value-content">
-                    <h2>Des modèles Excel professionnels et faciles à utiliser</h2>
-                    <p>Gagnez des heures de travail avec nos templates prêts à l'emploi. Tous nos modèles sont 100% éditables dans Microsoft Excel, Google Sheets et autres tableurs.</p>
-                    <button class="btn btn-primary btn-lg" onclick="App.navigate('templates')">Explorer les modèles</button>
-                </div>
-                <div class="value-mockup">
-                    <div class="mockup-header"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-                    <div class="mockup-body">
-                        <table class="mockup-table">
-                            <thead><tr><th>Mois</th><th>Objectif</th><th>Réalisé</th><th>%</th></tr></thead>
-                            <tbody>
-                                <tr><td>Janvier</td><td>2 000 000</td><td class="highlight">2 450 000</td><td class="highlight">122%</td></tr>
-                                <tr><td>Février</td><td>2 500 000</td><td class="highlight">2 780 000</td><td class="highlight">111%</td></tr>
-                                <tr><td>Mars</td><td>3 000 000</td><td>2 890 000</td><td>96%</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div></div></section>
-            
-            <section class="testimonials"><div class="container">
-                <h2 class="testimonials-title">Utilisé par plus de 10 000 professionnels</h2>
-                <div class="testimonials-grid">
-                    <div class="testimonial-card">
-                        <p class="testimonial-text">"J'ai trouvé le modèle dont j'avais besoin en quelques minutes. La qualité est excellente et j'ai pu l'adapter rapidement à mes besoins."</p>
-                        <div class="testimonial-author"><div class="testimonial-avatar">AD</div><div><div class="testimonial-name">Amadou Diallo</div><div class="testimonial-role">Directeur Financier, Dakar</div></div></div>
-                        <div class="testimonial-stars">★★★★★</div>
-                    </div>
-                    <div class="testimonial-card">
-                        <p class="testimonial-text">"ExcelModel m'a fait gagner un temps précieux. Les templates sont professionnels et adaptés au contexte africain. Je recommande !"</p>
-                        <div class="testimonial-author"><div class="testimonial-avatar">FK</div><div><div class="testimonial-name">Fatou Koné</div><div class="testimonial-role">Consultante RH, Abidjan</div></div></div>
-                        <div class="testimonial-stars">★★★★★</div>
-                    </div>
-                    <div class="testimonial-card">
-                        <p class="testimonial-text">"Le support client est réactif et les modèles sont de grande qualité. C'est devenu ma ressource principale pour les tableaux de bord."</p>
-                        <div class="testimonial-author"><div class="testimonial-avatar">MS</div><div><div class="testimonial-name">Moussa Sow</div><div class="testimonial-role">Contrôleur de gestion, Bamako</div></div></div>
-                        <div class="testimonial-stars">★★★★★</div>
-                    </div>
-                </div>
-            </div></section>
-            
-            <section class="support-section"><div class="container"><div class="support-grid">
-                <div class="support-avatar">👩‍💼</div>
-                <div class="support-content">
-                    <h2>Votre Assistant Personnel</h2>
-                    <ul class="support-list">
-                        <li>Nous vous aidons à choisir le bon modèle</li>
-                        <li>Assistance pour personnaliser vos templates</li>
-                        <li>Support par WhatsApp disponible 7j/7</li>
-                        <li>Création de modèles sur mesure disponible</li>
-                    </ul>
-                    <a href="https://wa.me/221773684203" target="_blank" class="btn btn-success btn-lg">💬 Contacter le support</a>
-                </div>
-            </div></div></section>
-            
-            <section class="features-bar"><div class="container"><div class="features-grid">
-                <div class="feature-item"><div class="feature-icon">📊</div><div class="feature-text">Nouveaux modèles chaque semaine</div></div>
-                <div class="feature-item"><div class="feature-icon">💬</div><div class="feature-text">Support WhatsApp 7j/7</div></div>
-                <div class="feature-item"><div class="feature-icon">✏️</div><div class="feature-text">100% personnalisables</div></div>
-                <div class="feature-item"><div class="feature-icon">📁</div><div class="feature-text">50+ modèles disponibles</div></div>
-            </div></div></section>
-            
             <section class="section"><div class="container">
                 <div class="section-header"><div class="section-badge">📁 Catégories</div><h2 class="section-title">Parcourir par Catégorie</h2></div>
                 <div class="categories-grid" id="categoriesGrid"></div>
+            </div></section>
+            <section class="section section-gray"><div class="container">
+                <div class="section-header-row"><h2 class="section-title">Modèles Populaires</h2><button class="btn btn-outline" onclick="App.navigate('templates')">Voir tout →</button></div>
+                <div class="templates-grid" id="featuredTemplatesGrid"></div>
             </div></section>
         </div>
 
@@ -385,9 +280,9 @@
         <div class="footer-grid">
             <div class="footer-brand"><div class="logo"><div class="logo-icon">XL</div><span class="logo-text">Excel<span>Model</span></span></div><p class="footer-desc">Modèles Excel professionnels pour les entreprises africaines.</p></div>
             <div><h4 class="footer-title">Liens</h4><ul class="footer-links"><li><a href="#" onclick="App.navigate('templates')">Modèles</a></li><li><a href="#" onclick="App.navigate('pricing')">Tarifs</a></li></ul></div>
-            <div><h4 class="footer-title">Contact</h4><ul class="footer-links"><li><a href="https://wa.me/221773684203">WhatsApp</a></li><li><a href="/cdn-cgi/l/email-protection#c0b3a1b7a1a4a7b3a1aca9a680a7ada1a9aceea3afad">Email</a></li></ul></div>
+            <div><h4 class="footer-title">Contact</h4><ul class="footer-links"><li><a href="https://wa.me/221773684203">WhatsApp</a></li><li><a href="mailto:sawadgsalif@gmail.com">Email</a></li></ul></div>
         </div>
-        <div class="footer-bottom"><p class="footer-copy">© 2026 ExcelModel | <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6c1f0d1b0d080b1f0d00050a2c0b010d0500420f0301">[email&#160;protected]</a> | +221 77 368 42 03</p></div>
+        <div class="footer-bottom"><p class="footer-copy">© 2026 ExcelModel | sawadgsalif@gmail.com | +221 77 368 42 03</p></div>
     </div></footer>
 
     <!-- TEMPLATE MODAL WITH FILE UPLOAD -->
@@ -456,7 +351,7 @@
         <div class="modal-body"><p id="confirmMessage">Êtes-vous sûr ?</p></div>
         <div class="modal-footer"><button class="btn btn-outline" onclick="App.closeModal('confirmModal')">Annuler</button><button class="btn btn-danger" id="confirmBtn">Supprimer</button></div>
     </div></div>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const SUPABASE_URL = 'https://nnkkeetruqonyjykuxre.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ua2tlZXRydXFvbnlqeWt1eHJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzMTQyMDAsImV4cCI6MjA4Mzg5MDIwMH0.y24yrgbRkg5PjU_HQ6O3nZxXOpv9yN5OLCYAuwu1gAo';
 const ADMIN_EMAIL = 'sawadgsalif@gmail.com';
@@ -871,4 +766,11 @@ const App = {
     goToPage(p) { const max = Math.ceil(this.filteredTemplates.length / ITEMS_PER_PAGE); if (p >= 1 && p <= max) { this.currentPage = p; this.renderAllTemplates(); window.scrollTo({ top: 200, behavior: 'smooth' }); } },
     download(id) { const t = this.templates.find(x => x.id === id); if (t?.file_url) window.open(t.file_url, '_blank'); else this.toast('Fichier non disponible', 'error'); },
     formatPrice(p) { return new Intl.NumberFormat('fr-FR').format(p || 0) + ' FCFA'; },
-    toast(msg, type = 'success') { const c = document.getElementById('toastContainer'); const t = document.createElement('div'); t.className = 'toast ' + type; t.innerHTML = `<span>${type === 'success' ? '✓' : '⚠'}</span><span class="toast-message">${msg}</span><button class="toast-close" onclick="this.parentElement.remove()">×</button>`; c.appendChild(t); setTimeout(() => t.classList.add('show'), 10
+    toast(msg, type = 'success') { const c = document.getElementById('toastContainer'); const t = document.createElement('div'); t.className = 'toast ' + type; t.innerHTML = `<span>${type === 'success' ? '✓' : '⚠'}</span><span class="toast-message">${msg}</span><button class="toast-close" onclick="this.parentElement.remove()">×</button>`; c.appendChild(t); setTimeout(() => t.classList.add('show'), 10); setTimeout(() => t.remove(), 4000); },
+    toggleMobileMenu() { const l = document.querySelector('.nav-links'); l.style.display = l.style.display === 'flex' ? 'none' : 'flex'; }
+};
+
+document.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+</body>
+</html>
